@@ -1,0 +1,402 @@
+Screens:
+  scrOverview:
+    Properties:
+      Fill: =RGBA(60, 74, 39, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+    Children:
+      - Label4_2:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =47
+            Size: =35
+            Text: ="Overview"
+            Width: =486
+            X: =56
+            Y: =40
+      - Button5:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Fill: =RGBA(0, 0, 0, 1)
+            Font: =Font.'Segoe UI'
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(16, 110, 190, 1)
+            OnSelect: =Navigate(scrHome, ScreenTransition.Fade)
+            PressedBorderColor: =RGBA(0, 69, 120, 1)
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Text: ="Close"
+            X: =1139
+            Y: =47
+      - drpStatusFilter:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            ChevronBackground: =RGBA(245, 245, 245, 1)
+            ChevronDisabledBackground: =RGBA(242, 242, 241, 0)
+            ChevronDisabledFill: =RGBA(161, 159, 157, 1)
+            ChevronFill: =RGBA(50, 49, 48, 1)
+            ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+            ChevronHoverFill: =RGBA(50, 49, 48, 1)
+            Color: =RGBA(50, 49, 48, 1)
+            Default: ="Active"
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Fill: =RGBA(245, 245, 245, 1)
+            Font: =Font.'Segoe UI'
+            HoverBorderColor: =RGBA(16, 110, 190, 1)
+            HoverColor: =RGBA(50, 49, 48, 1)
+            HoverFill: =RGBA(245, 245, 245, 1)
+            Items: =["Active", "All", "Pending Manager Approval", "Requested (to Warehouse)", "In Storage", "Requested (to Facility)", "Pending Inspector Approval", "Closed", "Rejected"]
+            Items.Value: =Value
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =5
+            PaddingTop: =5
+            PressedBorderColor: =RGBA(16, 110, 190, 1)
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(0, 120, 212, 1)
+            SelectionColor: =RGBA(50, 49, 48, 1)
+            SelectionFill: =RGBA(0, 120, 212, 1)
+            X: =464
+            Y: =47
+      - Gallery1:
+          Control: Gallery@2.15.0
+          Variant: Vertical
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Height: =565
+            Items: |-
+              =Filter('3PL request',
+                  (drpStatusFilter.Selected.Value = "Active" && Status <> "Closed") ||
+                  drpStatusFilter.Selected.Value = "All" ||
+                  Status = drpStatusFilter.Selected.Value
+              )
+            OnSelect: |-
+              =Set(varSelectedItem, ThisItem);
+              Navigate(scrRequestDetail, ScreenTransition.Fade)
+            TemplateSize: =44
+            Width: =1314
+            X: =22
+            Y: =168
+          Children:
+            - Label9:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(236, 236, 235, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: =ThisItem.'Sales Order'
+                  Width: =188
+                  X: =3
+            - Label9_1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(236, 236, 235, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: =ThisItem.'Part Number'
+                  Width: =142
+                  X: =191
+            - Label9_2:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(236, 236, 235, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: =ThisItem.Qty
+                  Width: =120
+                  X: =333
+            - Label9_3:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: |-
+                    =Switch(ThisItem.Status,
+                        "Pending Manager Approval", RGBA(136, 23, 152, 1),
+                        "Requested (to Warehouse)", RGBA(255, 196, 0, 1),
+                        "In Storage", RGBA(0, 120, 212, 1),
+                        "Requested (to Facility)", RGBA(255, 140, 0, 1),
+                        "Pending Inspector Approval", RGBA(103, 58, 183, 1),
+                        "Closed", RGBA(16, 124, 16, 1),
+                        "Rejected", RGBA(209, 52, 56, 1),
+                        RGBA(200, 200, 200, 1)
+                    )
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: =ThisItem.Status
+                  X: =453
+            - Label9_4:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(236, 236, 235, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: |-
+                    =Switch(ThisItem.Status,
+                        "Requested (to Warehouse)", ThisItem.DeliveryNoteNumber,
+                        "Requested (to Facility)", ThisItem.ReturnDeliveryNoteNumber,
+                        "Pending Manager Approval", If(IsBlank(ThisItem.ReturnDeliveryNoteNumber), ThisItem.DeliveryNoteNumber, ThisItem.ReturnDeliveryNoteNumber),
+                        ""
+                    )
+                  Width: =183
+                  X: =603
+            - Label9_5:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(236, 236, 235, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: |-
+                    =Switch(ThisItem.Status,
+                        "Requested (to Warehouse)", "Requested " & Text(ThisItem.DateRequestedWarehouse, "dd mmm yyyy"),
+                        "In Storage", "In storage since " & Text(ThisItem.DateInStorage, "dd mmm yyyy"),
+                        "Requested (to Facility)", "Return requested " & Text(ThisItem.DateRequestedFacility, "dd mmm yyyy"),
+                        "Closed", "Closed " & Text(ThisItem.DateClosed, "dd mmm yyyy"),
+                        ""
+                    )
+                  Width: =300
+                  X: =786
+            - Label9_6:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(236, 236, 235, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: |-
+                    =Switch(ThisItem.Status,
+                        "Requested (to Facility)", ThisItem.ReturnRemark,
+                        "Closed", ThisItem.ReturnRemark,
+                        ThisItem.Remark
+                    )
+                  Width: =216
+                  X: =1086
+      - Label5_3:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Sales Order"
+            X: =74
+            Y: =128
+      - Label5_4:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Part Number"
+            Width: =138
+            X: =224
+            Y: =128
+      - Label5_5:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Qty"
+            X: =362
+            Y: =128
+      - Label5_6:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Status"
+            X: =480
+            Y: =128
+      - Label5_7:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Delivery number"
+            Width: =194
+            X: =641
+            Y: =128
+      - Label5_8:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Start date of current status"
+            Width: =270
+            X: =847
+            Y: =128
+      - Label5_10:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Remarks"
+            Width: =120
+            X: =1117
+            Y: =128
+      - Button5_3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Fill: =RGBA(0, 0, 0, 1)
+            Font: =Font.'Segoe UI'
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(16, 110, 190, 1)
+            OnSelect: |-
+              =Set(varCSVContent,
+                  "Sales Order,Part Number,Qty,Status,DeliveryNoteNumber,ReturnDeliveryNoteNumber,Remark,ReturnRemark,SendRequestedBy,ReturnRequestedBy,SendApprovedBy,ReturnApprovedBy,InspectorApprovedBy,RejectedBy,DateRequestedWarehouse,DateInStorage,DateRequestedFacility,DateClosed,DateRejected" & Char(13) & Char(10) &
+                  Concat('3PL request',
+                      """" & Substitute('Sales Order', """", """""") & """," &
+                      """" & Substitute('Part Number', """", """""") & """," &
+                      Qty & "," &
+                      """" & Status & """," &
+                      """" & DeliveryNoteNumber & """," &
+                      """" & ReturnDeliveryNoteNumber & """," &
+                      """" & Substitute(Remark, """", """""") & """," &
+                      """" & Substitute(ReturnRemark, """", """""") & """," &
+                      """" & SendRequestedBy & """," &
+                      """" & ReturnRequestedBy & """," &
+                      """" & SendApprovedBy & """," &
+                      """" & ReturnApprovedBy & """," &
+                      """" & InspectorApprovedBy & """," &
+                      """" & RejectedBy & """," &
+                      Text(DateRequestedWarehouse, "yyyy-mm-dd hh:mm") & "," &
+                      Text(DateInStorage, "yyyy-mm-dd hh:mm") & "," &
+                      Text(DateRequestedFacility, "yyyy-mm-dd hh:mm") & "," &
+                      Text(DateClosed, "yyyy-mm-dd hh:mm") & "," &
+                      Text(DateRejected, "yyyy-mm-dd hh:mm") & Char(13) & Char(10)
+                  )
+              );
+
+              Launch("data:text/csv;charset=utf-8," & EncodeUrl(varCSVContent))
+            PressedBorderColor: =RGBA(0, 69, 120, 1)
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Text: ="Download as Excel"
+            Width: =180
+            X: =864
+            Y: =47
