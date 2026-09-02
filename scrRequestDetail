@@ -337,6 +337,38 @@ Screens:
             Width: =108
             X: =228
             Y: =552
+      - lblHdrTrolleyDetail:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Trolley No."
+            Width: =150
+            X: =1011
+            Y: =240
+      - lblTrolleyDetail:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 1)
+            DisabledFill: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Text: =If(IsBlank(varSelectedItem.TrolleyNumber), "—", varSelectedItem.TrolleyNumber)
+            Width: =309
+            X: =1011
+            Y: =294
       - Label5_25:
           Control: Label@2.5.1
           Properties:

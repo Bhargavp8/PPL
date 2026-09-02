@@ -114,7 +114,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.'Sales Order'
-                  Width: =188
+                  Width: =165
                   X: =3
             - Label9_1:
                 Control: Label@2.5.1
@@ -130,8 +130,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.'Part Number'
-                  Width: =142
-                  X: =191
+                  Width: =135
+                  X: =168
             - Label9_2:
                 Control: Label@2.5.1
                 Properties:
@@ -146,8 +146,24 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.Qty
-                  Width: =120
-                  X: =333
+                  Width: =70
+                  X: =303
+            - lblTrolleyOverview:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  Color: =RGBA(50, 49, 48, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(236, 236, 235, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: =ThisItem.TrolleyNumber
+                  Width: =115
+                  X: =373
             - Label9_3:
                 Control: Label@2.5.1
                 Properties:
@@ -172,7 +188,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.Status
-                  X: =453
+                  Width: =155
+                  X: =488
             - Label9_4:
                 Control: Label@2.5.1
                 Properties:
@@ -193,8 +210,8 @@ Screens:
                         "Pending Manager Approval", If(IsBlank(ThisItem.ReturnDeliveryNoteNumber), ThisItem.DeliveryNoteNumber, ThisItem.ReturnDeliveryNoteNumber),
                         ""
                     )
-                  Width: =183
-                  X: =603
+                  Width: =160
+                  X: =643
             - Label9_5:
                 Control: Label@2.5.1
                 Properties:
@@ -216,8 +233,8 @@ Screens:
                         "Closed", "Closed " & Text(ThisItem.DateClosed, "dd mmm yyyy"),
                         ""
                     )
-                  Width: =300
-                  X: =786
+                  Width: =275
+                  X: =803
             - Label9_6:
                 Control: Label@2.5.1
                 Properties:
@@ -237,8 +254,8 @@ Screens:
                         "Closed", ThisItem.ReturnRemark,
                         ThisItem.Remark
                     )
-                  Width: =216
-                  X: =1086
+                  Width: =224
+                  X: =1078
       - Label5_3:
           Control: Label@2.5.1
           Properties:
@@ -267,8 +284,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Part Number"
-            Width: =138
-            X: =224
+            Width: =125
+            X: =201
             Y: =128
       - Label5_5:
           Control: Label@2.5.1
@@ -283,7 +300,24 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Qty"
-            X: =362
+            Width: =60
+            X: =332
+            Y: =128
+      - lblHdrTrolleyOverview:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Trolley No."
+            Width: =115
+            X: =400
             Y: =128
       - Label5_6:
           Control: Label@2.5.1
@@ -298,7 +332,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Status"
-            X: =480
+            Width: =150
+            X: =515
             Y: =128
       - Label5_7:
           Control: Label@2.5.1
@@ -313,8 +348,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Delivery number"
-            Width: =194
-            X: =641
+            Width: =160
+            X: =681
             Y: =128
       - Label5_8:
           Control: Label@2.5.1
@@ -329,8 +364,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Start date of current status"
-            Width: =270
-            X: =847
+            Width: =240
+            X: =864
             Y: =128
       - Label5_10:
           Control: Label@2.5.1
@@ -346,7 +381,7 @@ Screens:
             Size: =16
             Text: ="Remarks"
             Width: =120
-            X: =1117
+            X: =1109
             Y: =128
       - Button5_3:
           Control: Classic/Button@2.2.0
@@ -364,11 +399,12 @@ Screens:
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
               =Set(varCSVContent,
-                  "Sales Order,Part Number,Qty,Status,DeliveryNoteNumber,ReturnDeliveryNoteNumber,Remark,ReturnRemark,SendRequestedBy,ReturnRequestedBy,SendApprovedBy,ReturnApprovedBy,InspectorApprovedBy,RejectedBy,DateRequestedWarehouse,DateInStorage,DateRequestedFacility,DateClosed,DateRejected" & Char(13) & Char(10) &
+                  "Sales Order,Part Number,Qty,Trolley Number,Status,DeliveryNoteNumber,ReturnDeliveryNoteNumber,Remark,ReturnRemark,SendRequestedBy,ReturnRequestedBy,SendApprovedBy,ReturnApprovedBy,InspectorApprovedBy,RejectedBy,DateRequestedWarehouse,DateInStorage,DateRequestedFacility,DateClosed,DateRejected" & Char(13) & Char(10) &
                   Concat('3PL request',
                       """" & Substitute('Sales Order', """", """""") & """," &
                       """" & Substitute('Part Number', """", """""") & """," &
                       Qty & "," &
+                      """" & Substitute(TrolleyNumber, """", """""") & """," &
                       """" & Status & """," &
                       """" & DeliveryNoteNumber & """," &
                       """" & ReturnDeliveryNoteNumber & """," &

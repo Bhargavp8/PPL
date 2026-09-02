@@ -28,14 +28,12 @@ Screens:
           Properties:
             BorderColor: =RGBA(245, 245, 245, 1)
             Color: =RGBA(50, 49, 48, 1)
-            Default: |-
-              ="
-              "
+            Default: =""
             DisabledBorderColor: =RGBA(0, 0, 0, 0)
             DisabledColor: =RGBA(161, 159, 157, 1)
             DisabledFill: =RGBA(242, 242, 241, 0)
             Font: =Font.'Segoe UI'
-            HintText: ="Search by sales order or part number"
+            HintText: ="Search by sales order, part number, remark or trolley"
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(255, 255, 255, 1)
@@ -54,7 +52,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =398
-            Items: =Search(Filter('3PL request', Lower(Trim(Status)) = "in storage"), txtSearch.Text, 'Sales Order', 'Part Number')
+            Items: =Search(Filter('3PL request', Lower(Trim(Status)) = "in storage"), txtSearch.Text, 'Sales Order', 'Part Number', Remark, TrolleyNumber)
             TemplateSize: =50
             Width: =1189
             X: =70
@@ -73,7 +71,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.'Sales Order'
-                  Width: =248
+                  Width: =215
             - Label7_1:
                 Control: Label@2.5.1
                 Properties:
@@ -87,8 +85,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.'Part Number'
-                  Width: =259
-                  X: =248
+                  Width: =225
+                  X: =215
             - Label7_2:
                 Control: Label@2.5.1
                 Properties:
@@ -102,7 +100,23 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.Qty
-                  X: =507
+                  Width: =80
+                  X: =440
+            - lblTrolleyReturn:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(217, 217, 216, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: =ThisItem.TrolleyNumber
+                  Width: =130
+                  X: =520
             - chkSelect:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -130,7 +144,7 @@ Screens:
                   PressedColor: =RGBA(50, 49, 48, 1)
                   PressedFill: =RGBA(0, 0, 0, 0)
                   Text: =
-                  X: =912
+                  X: =915
                   Y: =8
             - txtReturnRemark:
                 Control: Classic/TextInput@2.3.2
@@ -158,8 +172,8 @@ Screens:
                   RadiusBottomRight: =0
                   RadiusTopLeft: =0
                   RadiusTopRight: =0
-                  Width: =224
-                  X: =657
+                  Width: =235
+                  X: =650
       - Button4:
           Control: Classic/Button@2.2.0
           Properties:
@@ -195,10 +209,10 @@ Screens:
 
               Set(varLineItemsTable,
                   "<table style='border-collapse:collapse;width:100%;font-family:sans-serif;font-size:13px;'>" &
-                  "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
+                  "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Trolley No.</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
                   Concat(colReturnSelections As Sel,
                       With({Row: LookUp('3PL request', ID = Sel.ID)},
-                          "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Sales Order' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Part Number' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Sel.Remark & "</td></tr>"
+                          "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Sales Order' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Part Number' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.TrolleyNumber & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Sel.Remark & "</td></tr>"
                       )
                   ) &
                   "</table>"
@@ -284,7 +298,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Part Number"
-            X: =327
+            Width: =140
+            X: =294
             Y: =182
       - Label5_13:
           Control: Label@2.5.1
@@ -299,7 +314,24 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Qty"
-            X: =585
+            Width: =70
+            X: =518
+            Y: =182
+      - lblHdrTrolleyReturn:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Trolley No."
+            Width: =120
+            X: =598
             Y: =182
       - Label5_14:
           Control: Label@2.5.1
@@ -316,7 +348,7 @@ Screens:
             Size: =16
             Text: ="Remarks(able to edit)"
             Width: =238
-            X: =735
+            X: =728
             Y: =182
       - Label5_15:
           Control: Label@2.5.1
@@ -333,7 +365,7 @@ Screens:
             Size: =16
             Text: ="Tick to select "
             Width: =246
-            X: =973
+            X: =976
             Y: =182
       - Label14_1:
           Control: Label@2.5.1

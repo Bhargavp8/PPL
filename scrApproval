@@ -69,7 +69,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   Size: =16
                   Text: =ThisItem.'Sales Order'
-                  Width: =224
+                  Width: =200
                   Y: =2
             - Label5_31:
                 Control: Label@2.5.1
@@ -84,8 +84,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   Size: =16
                   Text: =ThisItem.'Part Number'
-                  Width: =273
-                  X: =224
+                  Width: =235
+                  X: =200
                   Y: =2
             - Label5_32:
                 Control: Label@2.5.1
@@ -100,8 +100,24 @@ Screens:
                   Font: =Font.'Segoe UI'
                   Size: =16
                   Text: =ThisItem.Qty
-                  Width: =112
-                  X: =497
+                  Width: =85
+                  X: =435
+                  Y: =2
+            - lblTrolleyApproval:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(217, 217, 216, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  Size: =16
+                  Text: =ThisItem.TrolleyNumber
+                  Width: =135
+                  X: =520
                   Y: =2
             - Label5_33:
                 Control: Label@2.5.1
@@ -116,8 +132,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   Size: =16
                   Text: =If(IsBlank(ThisItem.ReturnDeliveryNoteNumber), ThisItem.Remark, ThisItem.ReturnRemark)
-                  Width: =404
-                  X: =609
+                  Width: =358
+                  X: =655
                   Y: =2
       - Label6:
           Control: Label@2.5.1
@@ -166,7 +182,7 @@ Screens:
             Size: =16
             Text: ="Part Number"
             Width: =138
-            X: =309
+            X: =285
             Y: =182
       - Label5_28:
           Control: Label@2.5.1
@@ -180,7 +196,23 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Qty"
-            X: =576
+            Width: =70
+            X: =514
+            Y: =182
+      - lblHdrTrolleyApproval:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Trolley No."
+            Width: =125
+            X: =599
             Y: =182
       - Label5_29:
           Control: Label@2.5.1
@@ -194,7 +226,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Remark"
-            X: =694
+            Width: =140
+            X: =740
             Y: =182
       - Button7:
           Control: Classic/Button@2.2.0

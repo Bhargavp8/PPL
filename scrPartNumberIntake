@@ -5,7 +5,7 @@ Screens:
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
       OnVisible: |-
         =Clear(colLineItems);
-        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Remark: ""})
+        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Trolley: "", Remark: ""})
     Children:
       - Label4:
           Control: Label@2.5.1
@@ -54,7 +54,7 @@ Screens:
                   OnChange: |-
                     =Patch(colLineItems, ThisItem, {SalesOrder: txtCellSO.Text});
                     If(ThisItem.RowID = Last(colLineItems).RowID && !IsBlank(txtCellSO.Text),
-                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Remark: ""})
+                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Trolley: "", Remark: ""})
                     )
                   OnSelect: =Select(Parent)
                   PressedBorderColor: =RGBA(0, 120, 212, 1)
@@ -64,7 +64,7 @@ Screens:
                   RadiusBottomRight: =0
                   RadiusTopLeft: =0
                   RadiusTopRight: =0
-                  Width: =266
+                  Width: =240
             - txtCellPart:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -82,7 +82,7 @@ Screens:
                   OnChange: |-
                     =Patch(colLineItems, ThisItem, {PartNumber: txtCellPart.Text});
                     If(ThisItem.RowID = Last(colLineItems).RowID && !IsBlank(txtCellPart.Text),
-                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0})
+                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Trolley: "", Remark: ""})
                     )
                   OnSelect: =Select(Parent)
                   PressedBorderColor: =RGBA(0, 120, 212, 1)
@@ -92,8 +92,8 @@ Screens:
                   RadiusBottomRight: =0
                   RadiusTopLeft: =0
                   RadiusTopRight: =0
-                  Width: =252
-                  X: =266
+                  Width: =230
+                  X: =240
             - txtCellQty:
                 Control: Classic/TextInput@2.3.2
                 Properties:
@@ -111,7 +111,7 @@ Screens:
                   OnChange: |-
                     =Patch(colLineItems, ThisItem, {Qty: If(IsBlank(txtCellQty.Text) || txtCellQty.Text = "", 0, Value(txtCellQty.Text))});
                     If(ThisItem.RowID = Last(colLineItems).RowID && !IsBlank(txtCellQty.Text),
-                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0})
+                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Trolley: "", Remark: ""})
                     )
                   OnSelect: =Select(Parent)
                   PressedBorderColor: =RGBA(0, 120, 212, 1)
@@ -121,8 +121,37 @@ Screens:
                   RadiusBottomRight: =0
                   RadiusTopLeft: =0
                   RadiusTopRight: =0
-                  Width: =95
-                  X: =518
+                  Width: =85
+                  X: =470
+            - txtCellTrolley:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  Color: =RGBA(50, 49, 48, 1)
+                  Default: =ThisItem.Trolley
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  DisabledFill: =RGBA(242, 242, 241, 0)
+                  Fill: =RGBA(217, 217, 216, 1)
+                  Font: =Font.'Segoe UI'
+                  HoverBorderColor: =RGBA(16, 110, 190, 1)
+                  HoverColor: =RGBA(50, 49, 48, 1)
+                  HoverFill: =RGBA(255, 255, 255, 1)
+                  OnChange: |-
+                    =Patch(colLineItems, ThisItem, {Trolley: txtCellTrolley.Text});
+                    If(ThisItem.RowID = Last(colLineItems).RowID && !IsBlank(txtCellTrolley.Text),
+                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Trolley: "", Remark: ""})
+                    )
+                  OnSelect: =Select(Parent)
+                  PressedBorderColor: =RGBA(0, 120, 212, 1)
+                  PressedColor: =RGBA(50, 49, 48, 1)
+                  PressedFill: =RGBA(255, 255, 255, 1)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =140
+                  X: =555
             - Icon4:
                 Control: Classic/Icon@2.5.0
                 Properties:
@@ -142,7 +171,7 @@ Screens:
                   PressedColor: =RGBA(16, 110, 190, 1)
                   PressedFill: =RGBA(0, 0, 0, 0)
                   Width: =45
-                  X: =910
+                  X: =975
                   Y: =2
             - txtCellRemark:
                 Control: Classic/TextInput@2.3.2
@@ -161,7 +190,7 @@ Screens:
                   OnChange: |-
                     =Patch(colLineItems, ThisItem, {Remark: txtCellRemark.Text});
                     If(ThisItem.RowID = Last(colLineItems).RowID && !IsBlank(txtCellRemark.Text),
-                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Remark: ""})
+                        Collect(colLineItems, {RowID: GUID(), SalesOrder: "", PartNumber: "", Qty: 0, Trolley: "", Remark: ""})
                     )
                   OnSelect: =Select(Parent)
                   PressedBorderColor: =RGBA(0, 120, 212, 1)
@@ -171,8 +200,8 @@ Screens:
                   RadiusBottomRight: =0
                   RadiusTopLeft: =0
                   RadiusTopRight: =0
-                  Width: =285
-                  X: =613
+                  Width: =265
+                  X: =695
       - Button3:
           Control: Classic/Button@2.2.0
           Properties:
@@ -201,6 +230,7 @@ Screens:
                       'Sales Order': Text(SalesOrder),
                       'Part Number': Text(PartNumber),
                       Qty: Qty,
+                      TrolleyNumber: Text(Trolley),
                       Remark: Remark,
                       Status: "Pending Manager Approval",
                       SendRequestedBy: User().Email,
@@ -210,8 +240,8 @@ Screens:
 
               Set(varLineItemsTable,
                   "<table style='border-collapse:collapse;width:100%;font-family:sans-serif;font-size:13px;'>" &
-                  "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
-                  Concat(colToSubmit, "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & SalesOrder & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & PartNumber & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Remark & "</td></tr>") &
+                  "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Trolley No.</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
+                  Concat(colToSubmit, "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & SalesOrder & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & PartNumber & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Trolley & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Remark & "</td></tr>") &
                   "</table>"
               );
 
@@ -254,6 +284,7 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Sales Order"
+            Width: =140
             X: =78
             Y: =129
       - Label5_1:
@@ -269,7 +300,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Part Number"
-            X: =335
+            Width: =140
+            X: =310
             Y: =129
       - Label5_2:
           Control: Label@2.5.1
@@ -284,7 +316,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Qty"
-            X: =593
+            Width: =70
+            X: =545
             Y: =129
       - Button4_2:
           Control: Classic/Button@2.2.0
@@ -311,6 +344,22 @@ Screens:
             Text: ="Back"
             X: =340
             Y: =648
+      - lblHdrTrolleyIntake:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Trolley No."
+            Width: =130
+            X: =625
+            Y: =129
       - Label5_9:
           Control: Label@2.5.1
           Properties:
@@ -324,7 +373,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Remarks"
-            X: =683
+            Width: =140
+            X: =765
             Y: =129
       - Label14:
           Control: Label@2.5.1
