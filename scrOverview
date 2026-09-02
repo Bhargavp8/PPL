@@ -67,7 +67,7 @@ Screens:
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(245, 245, 245, 1)
-            Items: =["Active", "All", "Pending Manager Approval", "Requested (to Warehouse)", "In Storage", "Requested (to Facility)", "Pending Inspector Approval", "Closed", "Rejected"]
+            Items: =["Active", "All", "Pending Manager Approval", "Requested (to Warehouse)", "In Storage", "Pending Engineer Approval", "Returned (Awaiting Receipt)", "Received", "Requested (to Facility)", "Pending Inspector Approval", "Closed", "Rejected"]
             Items.Value: =Value
             PaddingBottom: =5
             PaddingLeft: =12
@@ -88,7 +88,7 @@ Screens:
             Height: =565
             Items: |-
               =Filter('3PL request',
-                  (drpStatusFilter.Selected.Value = "Active" && Status <> "Closed") ||
+                  (drpStatusFilter.Selected.Value = "Active" && Status <> "Closed" && Status <> "Received") ||
                   drpStatusFilter.Selected.Value = "All" ||
                   Status = drpStatusFilter.Selected.Value
               )
@@ -180,6 +180,9 @@ Screens:
                         "In Storage", RGBA(0, 120, 212, 1),
                         "Requested (to Facility)", RGBA(255, 140, 0, 1),
                         "Pending Inspector Approval", RGBA(103, 58, 183, 1),
+                        "Pending Engineer Approval", RGBA(0, 130, 140, 1),
+                        "Returned (Awaiting Receipt)", RGBA(230, 110, 0, 1),
+                        "Received", RGBA(16, 124, 16, 1),
                         "Closed", RGBA(16, 124, 16, 1),
                         "Rejected", RGBA(209, 52, 56, 1),
                         RGBA(200, 200, 200, 1)
@@ -208,6 +211,9 @@ Screens:
                         "Requested (to Warehouse)", ThisItem.DeliveryNoteNumber,
                         "Requested (to Facility)", ThisItem.ReturnDeliveryNoteNumber,
                         "Pending Manager Approval", If(IsBlank(ThisItem.ReturnDeliveryNoteNumber), ThisItem.DeliveryNoteNumber, ThisItem.ReturnDeliveryNoteNumber),
+                        "Pending Engineer Approval", ThisItem.ReturnDeliveryNoteNumber,
+                        "Returned (Awaiting Receipt)", ThisItem.ReturnDeliveryNoteNumber,
+                        "Received", ThisItem.ReturnDeliveryNoteNumber,
                         ""
                     )
                   Width: =160
@@ -231,6 +237,9 @@ Screens:
                         "In Storage", "In storage since " & Text(ThisItem.DateInStorage, "dd mmm yyyy"),
                         "Requested (to Facility)", "Return requested " & Text(ThisItem.DateRequestedFacility, "dd mmm yyyy"),
                         "Closed", "Closed " & Text(ThisItem.DateClosed, "dd mmm yyyy"),
+                        "Pending Engineer Approval", "Return requested " & Text(ThisItem.DateRequestedFacility, "dd mmm yyyy"),
+                        "Returned (Awaiting Receipt)", "Approved " & Text(ThisItem.DateEngineerApproved, "dd mmm yyyy"),
+                        "Received", "Received " & Text(ThisItem.DateReceived, "dd mmm yyyy"),
                         ""
                     )
                   Width: =275
@@ -252,6 +261,9 @@ Screens:
                     =Switch(ThisItem.Status,
                         "Requested (to Facility)", ThisItem.ReturnRemark,
                         "Closed", ThisItem.ReturnRemark,
+                        "Pending Engineer Approval", ThisItem.ReturnRemark,
+                        "Returned (Awaiting Receipt)", ThisItem.ReturnRemark,
+                        "Received", ThisItem.ReturnRemark,
                         ThisItem.Remark
                     )
                   Width: =224
@@ -399,7 +411,7 @@ Screens:
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
               =Set(varCSVContent,
-                  "Sales Order,Part Number,Qty,Trolley Number,Status,DeliveryNoteNumber,ReturnDeliveryNoteNumber,Remark,ReturnRemark,SendRequestedBy,ReturnRequestedBy,SendApprovedBy,ReturnApprovedBy,InspectorApprovedBy,RejectedBy,DateRequestedWarehouse,DateInStorage,DateRequestedFacility,DateClosed,DateRejected" & Char(13) & Char(10) &
+                  "Sales Order,Part Number,Qty,Trolley Number,Status,DeliveryNoteNumber,ReturnDeliveryNoteNumber,Remark,ReturnRemark,SendRequestedBy,ReturnRequestedBy,SendApprovedBy,ReturnApprovedBy,InspectorApprovedBy,RejectedBy,DateRequestedWarehouse,DateInStorage,DateRequestedFacility,DateClosed,DateRejected,EngineerApprovedBy,DateEngineerApproved,ReceivedBy,DateReceived" & Char(13) & Char(10) &
                   Concat('3PL request',
                       """" & Substitute('Sales Order', """", """""") & """," &
                       """" & Substitute('Part Number', """", """""") & """," &
@@ -420,7 +432,11 @@ Screens:
                       Text(DateInStorage, "yyyy-mm-dd hh:mm") & "," &
                       Text(DateRequestedFacility, "yyyy-mm-dd hh:mm") & "," &
                       Text(DateClosed, "yyyy-mm-dd hh:mm") & "," &
-                      Text(DateRejected, "yyyy-mm-dd hh:mm") & Char(13) & Char(10)
+                      Text(DateRejected, "yyyy-mm-dd hh:mm") & "," &
+                      """" & EngineerApprovedBy & """," &
+                      Text(DateEngineerApproved, "yyyy-mm-dd hh:mm") & "," &
+                      """" & ReceivedBy & """," &
+                      Text(DateReceived, "yyyy-mm-dd hh:mm") & Char(13) & Char(10)
                   )
               );
 

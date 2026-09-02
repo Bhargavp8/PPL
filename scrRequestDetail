@@ -369,6 +369,43 @@ Screens:
             Width: =309
             X: =1011
             Y: =294
+      - lblHdrEngDetail:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Return progress"
+            Width: =200
+            X: =1011
+            Y: =360
+      - lblEngDetail:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 1)
+            DisabledFill: =RGBA(255, 255, 255, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Height: =120
+            Size: =11
+            Text: |-
+              ="Return note: " & If(IsBlank(varSelectedItem.ReturnDeliveryNoteNumber), "—", varSelectedItem.ReturnDeliveryNoteNumber) & Char(10) &
+              "Engineer: " & If(IsBlank(varSelectedItem.EngineerApprovedBy), "—", varSelectedItem.EngineerApprovedBy) & Char(10) &
+              "Received: " & If(IsBlank(varSelectedItem.ReceivedBy), "—", varSelectedItem.ReceivedBy)
+            Width: =309
+            X: =1011
+            Y: =414
       - Label5_25:
           Control: Label@2.5.1
           Properties:

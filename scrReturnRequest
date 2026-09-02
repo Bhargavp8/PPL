@@ -199,7 +199,7 @@ Screens:
 
               ForAll(colReturnSelections As Sel,
                   Patch('3PL request', {ID: Sel.ID}, {
-                      Status: "Pending Manager Approval",
+                      Status: "Pending Engineer Approval",
                       ReturnDeliveryNoteNumber: varDeliveryNote,
                       ReturnRemark: Sel.Remark,
                       ReturnRequestedBy: User().Email,
@@ -218,20 +218,25 @@ Screens:
                   "</table>"
               );
 
-              ForAll(Filter('3PL Approvers', Role = "Manager") As Mgr,
+              Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer"), Email, ";"));
+              Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics"), Email, ";"));
+
+              If(IsBlank(varEngineerTo),
+                  Notify("Saved, but no Engineer is listed in '3PL Approvers' so no approval email was sent.", NotificationType.Warning),
                   Office365Outlook.SendEmailV2(
-                      Mgr.Email,
+                      varEngineerTo,
                       "Action required: Approve " & varDeliveryNote & " - return to facility",
-                      "<p>Hello " & Mgr.'Name ({Name})' & ",</p>" &
+                      "<p>Hello,</p>" &
                       "<p>Please help to approve the request: " & varDeliveryNote & " - parts requested to return to facility.</p>" &
                       varLineItemsTable &
                       "<p>Regards,<br>" & User().FullName & "</p>" &
-                      "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>"
+                      "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>",
+                      {Cc: varLogisticsTo}
                   )
               );
 
               Clear(colReturnSelections);
-              Notify("Return submitted for approval — Delivery Note " & varDeliveryNote, NotificationType.Success);
+              Notify("Return submitted to Engineering — Delivery Note " & varDeliveryNote, NotificationType.Success);
               Navigate(scrHome, ScreenTransition.Fade)
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)

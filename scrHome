@@ -136,7 +136,7 @@ Screens:
             RadiusTopLeft: =12
             RadiusTopRight: =12
             Text: =""
-            Width: =272
+            Width: =230
             X: =58
             Y: =438
       - Icon3:
@@ -158,7 +158,7 @@ Screens:
             PressedColor: =RGBA(16, 110, 190, 1)
             PressedFill: =RGBA(0, 0, 0, 0)
             Width: =45
-            X: =171
+            X: =150
             Y: =493
       - Label3:
           Control: Label@2.5.1
@@ -175,8 +175,8 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Text: ="Submit request"
-            Width: =135
-            X: =126
+            Width: =230
+            X: =58
             Y: =542
       - Label3_1:
           Control: Label@2.5.1
@@ -194,8 +194,8 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Size: =11
             Text: ="Send to warehouse"
-            Width: =177
-            X: =106
+            Width: =230
+            X: =58
             Y: =567
       - Button2:
           Control: Classic/Button@2.2.0
@@ -222,7 +222,7 @@ Screens:
             RadiusTopLeft: =0
             RadiusTopRight: =0
             Text: =""
-            Width: =272
+            Width: =230
             X: =58
             Y: =438
       - Button1_1:
@@ -251,8 +251,8 @@ Screens:
             RadiusTopLeft: =12
             RadiusTopRight: =12
             Text: =""
-            Width: =302
-            X: =690
+            Width: =230
+            X: =574
             Y: =438
       - Icon3_1:
           Control: Classic/Icon@2.5.0
@@ -273,7 +273,7 @@ Screens:
             PressedColor: =RGBA(16, 110, 190, 1)
             PressedFill: =RGBA(0, 0, 0, 0)
             Width: =50
-            X: =816
+            X: =664
             Y: =493
       - Label3_2:
           Control: Label@2.5.1
@@ -290,8 +290,8 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Text: ="Open transactions"
-            Width: =186
-            X: =748
+            Width: =230
+            X: =574
             Y: =542
       - Label3_3:
           Control: Label@2.5.1
@@ -309,8 +309,8 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Size: =11
             Text: ="View item status"
-            Width: =196
-            X: =743
+            Width: =230
+            X: =574
             Y: =567
       - Button2_1:
           Control: Classic/Button@2.2.0
@@ -337,8 +337,8 @@ Screens:
             RadiusTopLeft: =0
             RadiusTopRight: =0
             Text: =""
-            Width: =302
-            X: =690
+            Width: =230
+            X: =574
             Y: =438
       - Button1_2:
           Control: Classic/Button@2.2.0
@@ -366,8 +366,8 @@ Screens:
             RadiusTopLeft: =12
             RadiusTopRight: =12
             Text: =""
-            Width: =302
-            X: =1033
+            Width: =230
+            X: =832
             Y: =438
       - Icon3_2:
           Control: Classic/Icon@2.5.0
@@ -388,7 +388,7 @@ Screens:
             PressedColor: =RGBA(16, 110, 190, 1)
             PressedFill: =RGBA(0, 0, 0, 0)
             Width: =50
-            X: =1159
+            X: =922
             Y: =493
       - Label3_4:
           Control: Label@2.5.1
@@ -405,7 +405,8 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Text: ="Update/Approve"
-            X: =1109
+            Width: =230
+            X: =832
             Y: =542
       - Label3_5:
           Control: Label@2.5.1
@@ -422,10 +423,10 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Size: =11
-            Text: ="Shipping/Manager/Inspector"
-            Width: =218
-            X: =1078
-            Y: =566
+            Text: ="Engineer/Manager/Shipping"
+            Width: =230
+            X: =832
+            Y: =567
       - Button2_2:
           Control: Classic/Button@2.2.0
           Group: Update status
@@ -444,6 +445,9 @@ Screens:
             HoverFill: =RGBA(0,0,0,0)
             OnSelect: |-
               =If(
+                  !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Engineer")),
+                  Navigate(scrEngineerApproval, ScreenTransition.Fade),
+
                   !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && (Role = "Manager" || Role = "Inspector"))),
                   Navigate(scrApproval, ScreenTransition.Fade),
 
@@ -460,8 +464,8 @@ Screens:
             RadiusTopLeft: =0
             RadiusTopRight: =0
             Text: =""
-            Width: =302
-            X: =1033
+            Width: =230
+            X: =832
             Y: =438
       - Button1_3:
           Control: Classic/Button@2.2.0
@@ -489,9 +493,9 @@ Screens:
             RadiusTopLeft: =12
             RadiusTopRight: =12
             Text: =""
-            Width: =272
-            X: =376
-            Y: =437
+            Width: =230
+            X: =316
+            Y: =438
       - Icon3_3:
           Control: Classic/Icon@2.5.0
           Group: Submit request_1
@@ -511,8 +515,8 @@ Screens:
             PressedColor: =RGBA(16, 110, 190, 1)
             PressedFill: =RGBA(0, 0, 0, 0)
             Width: =45
-            X: =489
-            Y: =492
+            X: =408
+            Y: =493
       - Label3_6:
           Control: Label@2.5.1
           Group: Submit request_1
@@ -528,9 +532,9 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Text: ="Request return"
-            Width: =135
-            X: =444
-            Y: =541
+            Width: =230
+            X: =316
+            Y: =542
       - Label3_7:
           Control: Label@2.5.1
           Group: Submit request_1
@@ -547,9 +551,9 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Size: =11
             Text: ="Back to PWCS"
-            Width: =177
-            X: =424
-            Y: =566
+            Width: =230
+            X: =316
+            Y: =567
       - Button2_3:
           Control: Classic/Button@2.2.0
           Group: Submit request_1
@@ -575,6 +579,121 @@ Screens:
             RadiusTopLeft: =0
             RadiusTopRight: =0
             Text: =""
-            Width: =272
-            X: =376
-            Y: =437
+            Width: =230
+            X: =316
+            Y: =438
+      - Button1_4:
+          Control: Classic/Button@2.2.0
+          Group: Confirm receipt
+          Properties:
+            AutoDisableOnSelect: =false
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(247,247,248,1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Fill: =RGBA(0, 0, 0, 1)
+            Font: =Font.'Segoe UI'
+            Height: =200
+            HoverBorderColor: =RGBA(113, 111, 110, 1)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(16, 110, 190, 1)
+            OnSelect: =
+            PressedBorderColor: =RGBA(0, 69, 120, 1)
+            PressedColor: =RGBA(255, 255, 255, 1)
+            PressedFill: =RGBA(16, 110, 190, 1)
+            RadiusBottomLeft: =12
+            RadiusBottomRight: =12
+            RadiusTopLeft: =12
+            RadiusTopRight: =12
+            Text: =""
+            Width: =230
+            X: =1090
+            Y: =438
+      - Icon3_4:
+          Control: Classic/Icon@2.5.0
+          Group: Confirm receipt
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 120, 212, 1)
+            DisabledBorderColor: =RGBA(245, 245, 245, 1)
+            DisabledColor: =RGBA(225, 223, 221, 1)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            FocusedBorderThickness: =4
+            Height: =49
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(16, 110, 190, 1)
+            HoverFill: =RGBA(0, 0, 0, 0)
+            Icon: =Icon.CheckBadge
+            PressedBorderColor: =RGBA(0, 0, 0, 0)
+            PressedColor: =RGBA(16, 110, 190, 1)
+            PressedFill: =RGBA(0, 0, 0, 0)
+            Width: =50
+            X: =1180
+            Y: =493
+      - Label3_8:
+          Control: Label@2.5.1
+          Group: Confirm receipt
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Text: ="Confirm receipt"
+            Width: =230
+            X: =1090
+            Y: =542
+      - Label3_9:
+          Control: Label@2.5.1
+          Group: Confirm receipt
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(113, 111, 110, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Size: =11
+            Text: ="Parts back at facility"
+            Width: =230
+            X: =1090
+            Y: =567
+      - Button2_4:
+          Control: Classic/Button@2.2.0
+          Group: Confirm receipt
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(0,0,0,0)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Fill: =RGBA(0,0,0,0)
+            Font: =Font.'Segoe UI'
+            Height: =200
+            HoverBorderColor: =RGBA(0, 0, 0, 0)
+            HoverColor: =RGBA(0,0,0,0)
+            HoverFill: =RGBA(0,0,0,0)
+            OnSelect: =Navigate(scrConfirmReceipt, ScreenTransition.Fade)
+            PressedBorderColor: =RGBA(0,0,0,0)
+            PressedColor: =RGBA(0,0,0,0)
+            PressedFill: =RGBA(0,0,0,0)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Text: =""
+            Width: =230
+            X: =1090
+            Y: =438
