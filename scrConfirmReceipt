@@ -362,7 +362,11 @@ Screens:
             FocusedBorderThickness: =4
             Font: =Font.'Segoe UI'
             Size: =15
-            Text: ="You have no returns awaiting receipt."
+            Text: |-
+              =If(IsBlank(txtRcvSearch.Text),
+                  "You have no returns awaiting receipt.",
+                  "No items awaiting receipt match your search."
+              )
             Visible: =CountRows(galReceiptItems.AllItems) = 0
             Width: =500
             X: =86

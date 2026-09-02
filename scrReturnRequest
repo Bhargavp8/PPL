@@ -218,8 +218,8 @@ Screens:
                   "</table>"
               );
 
-              Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer"), Email, ";"));
-              Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics"), Email, ";"));
+              Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer" && !IsBlank(Email)), Email, ";"));
+              Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
 
               If(IsBlank(varEngineerTo),
                   Notify("Saved, but no Engineer is listed in '3PL Approvers' so no approval email was sent.", NotificationType.Warning),

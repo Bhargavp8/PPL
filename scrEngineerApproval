@@ -77,7 +77,13 @@ Screens:
             Text: |-
               =If(IsBlank(drpEngNote.Selected.Value),
                   "Select a return delivery note to review",
-                  "Return to facility - " & drpEngNote.Selected.Value & " (" & CountRows(galEngItems.AllItems) & " line items)"
+                  "Return to facility - " & drpEngNote.Selected.Value & " (" &
+                  CountRows(
+                      Filter('3PL request',
+                          Status = "Pending Engineer Approval" &&
+                          ReturnDeliveryNoteNumber = drpEngNote.Selected.Value
+                      )
+                  ) & " line items)"
               )
             Width: =620
             X: =404
@@ -299,8 +305,8 @@ Screens:
                       })
                   );
 
-                  Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics"), Email, ";"));
-                  Set(varRequestorTo, Concat(Distinct(colEngApprove, ReturnRequestedBy), Value, ";"));
+                  Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
+                  Set(varRequestorTo, Concat(Filter(Distinct(colEngApprove, ReturnRequestedBy), !IsBlank(Value)), Value, ";"));
 
                   Set(varEngTable,
                       "<table style='border-collapse:collapse;width:100%;font-family:sans-serif;font-size:13px;'>" &
