@@ -193,9 +193,20 @@ Screens:
                   Notify("Tick at least one line before submitting.", NotificationType.Error),
 
                   Set(varMaxReturnNum,
-                      Max(
-                          Filter('3PL request', !IsBlank(ReturnDeliveryNoteNumber)),
-                          Value(Mid(ReturnDeliveryNoteNumber, 3))
+                      IfError(
+                          Value(
+                              Mid(
+                                  First(
+                                      Sort(
+                                          Filter('3PL request', StartsWith(ReturnDeliveryNoteNumber, "R-")),
+                                          ReturnDeliveryNoteNumber,
+                                          SortOrder.Descending
+                                      )
+                                  ).ReturnDeliveryNoteNumber,
+                                  3
+                              )
+                          ),
+                          0
                       )
                   );
                   Set(varDeliveryNote, "R-" & Text(Coalesce(varMaxReturnNum, 0) + 1, "0000"));

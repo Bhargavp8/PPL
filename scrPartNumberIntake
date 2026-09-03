@@ -252,7 +252,7 @@ Screens:
               If(CountRows(colToSubmit) = 0,
                   Notify("Enter at least one line with a sales order and part number before submitting.", NotificationType.Error),
 
-                  Set(varNextID, Max('3PL request', ID) + 1);
+                  Set(varNextID, Coalesce(First(Sort('3PL request', ID, SortOrder.Descending)).ID, 0) + 1);
                   Set(varDeliveryNote, "S-" & Text(varNextID, "0000"));
 
                   ForAll(colToSubmit,

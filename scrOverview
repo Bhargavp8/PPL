@@ -87,10 +87,10 @@ Screens:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =565
             Items: |-
-              =Filter('3PL request',
-                  (drpStatusFilter.Selected.Value = "Active" && Status <> "Closed" && Status <> "Received") ||
-                  drpStatusFilter.Selected.Value = "All" ||
-                  Status = drpStatusFilter.Selected.Value
+              =Switch(drpStatusFilter.Selected.Value,
+                  "All", '3PL request',
+                  "Active", Filter('3PL request', Status <> "Closed" && Status <> "Received"),
+                  Filter('3PL request', Status = drpStatusFilter.Selected.Value)
               )
             OnSelect: |-
               =Set(varSelectedItem, ThisItem);
