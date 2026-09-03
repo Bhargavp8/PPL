@@ -3,7 +3,9 @@ Screens:
     Properties:
       Fill: =RGBA(92, 51, 23, 1)
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
-      OnVisible: =Clear(colReceiptSelections)
+      OnVisible: |-
+        =Clear(colReceiptSelections);
+        Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")))
     Children:
       - lblRcvTitle:
           Control: Label@2.5.1
@@ -170,7 +172,7 @@ Screens:
               =Search(
                   Filter('3PL request',
                       Status = "Returned (Awaiting Receipt)" &&
-                      ReturnRequestedBy = User().Email
+                      (ReturnRequestedBy = User().Email || varIsSuperUser)
                   ),
                   txtRcvSearch.Text, 'Sales Order', 'Part Number', Description, ReturnRemark, TrolleyNumber
               )

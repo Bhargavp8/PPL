@@ -3,7 +3,9 @@ Screens:
     Properties:
       Fill: =RGBA(0, 82, 88, 1)
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
-      OnVisible: =ClearCollect(colEngineerRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Engineer"))
+      OnVisible: |-
+        =ClearCollect(colEngineerRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && (Role = "Engineer" || Role = "Super User")));
+        Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")))
     Children:
       - lblEngTitle:
           Control: Label@2.5.1

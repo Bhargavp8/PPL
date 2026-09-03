@@ -3,7 +3,9 @@ Screens:
     Properties:
       Fill: =RGBA(194, 155, 39, 1)
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
-      OnVisible: =ClearCollect(colMyRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email))))
+      OnVisible: |-
+        =ClearCollect(colMyRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email))));
+        Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")))
     Children:
       - drpDeliveryNote1:
           Control: Classic/DropDown@2.3.1
@@ -27,8 +29,8 @@ Screens:
             Items: |-
               =Distinct(
                   Filter('3PL request',
-                      (Status = "Pending Manager Approval" && CountRows(Filter(colMyRoles, Role = "Manager")) > 0) ||
-                      (Status = "Pending Inspector Approval" && CountRows(Filter(colMyRoles, Role = "Inspector")) > 0)
+                      (Status = "Pending Manager Approval" && (varIsSuperUser || CountRows(Filter(colMyRoles, Role = "Manager")) > 0)) ||
+                      (Status = "Pending Inspector Approval" && (varIsSuperUser || CountRows(Filter(colMyRoles, Role = "Inspector")) > 0))
                   ),
                   If(Status = "Pending Inspector Approval" || !IsBlank(ReturnDeliveryNoteNumber), ReturnDeliveryNoteNumber, DeliveryNoteNumber)
               )
