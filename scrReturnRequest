@@ -19,7 +19,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =53
             Size: =30
-            Text: ="Request Return 3 PL service - "
+            Text: ="Request Return 3PL Service"
             Width: =546
             X: =27
             Y: =36
@@ -52,7 +52,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =398
-            Items: =Search(Filter('3PL request', Lower(Trim(Status)) = "in storage"), txtSearch.Text, 'Sales Order', 'Part Number', Description, Remark, TrolleyNumber)
+            Items: =Search(Filter('3PL request', Status = "In Storage"), txtSearch.Text, 'Sales Order', 'Part Number', Description, Remark, TrolleyNumber)
             TemplateSize: =50
             Width: =1189
             X: =70
@@ -189,55 +189,59 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
-              =Set(varMaxReturnNum,
-                  Max(
-                      Filter('3PL request', !IsBlank(ReturnDeliveryNoteNumber)),
-                      Value(Mid(ReturnDeliveryNoteNumber, 3))
-                  )
-              );
-              Set(varDeliveryNote, "R-" & Text(Coalesce(varMaxReturnNum, 0) + 1, "0000"));
+              =If(CountRows(colReturnSelections) = 0,
+                  Notify("Tick at least one line before submitting.", NotificationType.Error),
 
-              ForAll(colReturnSelections As Sel,
-                  Patch('3PL request', {ID: Sel.ID}, {
-                      Status: "Pending Engineer Approval",
-                      ReturnDeliveryNoteNumber: varDeliveryNote,
-                      ReturnRemark: Sel.Remark,
-                      ReturnRequestedBy: User().Email,
-                      DateRequestedFacility: Now()
-                  })
-              );
-
-              Set(varLineItemsTable,
-                  "<table style='border-collapse:collapse;width:100%;font-family:sans-serif;font-size:13px;'>" &
-                  "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Description</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Trolley No.</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
-                  Concat(colReturnSelections As Sel,
-                      With({Row: LookUp('3PL request', ID = Sel.ID)},
-                          "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Sales Order' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Part Number' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.Description & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.TrolleyNumber & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Sel.Remark & "</td></tr>"
+                  Set(varMaxReturnNum,
+                      Max(
+                          Filter('3PL request', !IsBlank(ReturnDeliveryNoteNumber)),
+                          Value(Mid(ReturnDeliveryNoteNumber, 3))
                       )
-                  ) &
-                  "</table>"
-              );
+                  );
+                  Set(varDeliveryNote, "R-" & Text(Coalesce(varMaxReturnNum, 0) + 1, "0000"));
 
-              Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer" && !IsBlank(Email)), Email, ";"));
-              Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
+                  ForAll(colReturnSelections As Sel,
+                      Patch('3PL request', {ID: Sel.ID}, {
+                          Status: "Pending Engineer Approval",
+                          ReturnDeliveryNoteNumber: varDeliveryNote,
+                          ReturnRemark: Sel.Remark,
+                          ReturnRequestedBy: User().Email,
+                          DateRequestedFacility: Now()
+                      })
+                  );
 
-              If(IsBlank(varEngineerTo),
-                  Notify("Saved, but no Engineer is listed in '3PL Approvers' so no approval email was sent.", NotificationType.Warning),
-                  Office365Outlook.SendEmailV2(
-                      varEngineerTo,
-                      "Action required: Approve " & varDeliveryNote & " - return to facility",
-                      "<p>Hello,</p>" &
-                      "<p>Please help to approve the request: " & varDeliveryNote & " - parts requested to return to facility.</p>" &
-                      varLineItemsTable &
-                      "<p>Regards,<br>" & User().FullName & "</p>" &
-                      "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>",
-                      {Cc: varLogisticsTo}
-                  )
-              );
+                  Set(varLineItemsTable,
+                      "<table style='border-collapse:collapse;width:100%;font-family:sans-serif;font-size:13px;'>" &
+                      "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Description</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Trolley No.</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
+                      Concat(colReturnSelections As Sel,
+                          With({Row: LookUp('3PL request', ID = Sel.ID)},
+                              "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Sales Order' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.'Part Number' & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.Description & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Row.TrolleyNumber & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Sel.Remark & "</td></tr>"
+                          )
+                      ) &
+                      "</table>"
+                  );
 
-              Clear(colReturnSelections);
-              Notify("Return submitted to Engineering — Delivery Note " & varDeliveryNote, NotificationType.Success);
-              Navigate(scrHome, ScreenTransition.Fade)
+                  Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer" && !IsBlank(Email)), Email, ";"));
+                  Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
+
+                  If(IsBlank(varEngineerTo),
+                      Notify("Saved, but no Engineer is listed in '3PL Approvers' so no approval email was sent.", NotificationType.Warning),
+                      Office365Outlook.SendEmailV2(
+                          varEngineerTo,
+                          "Action required: Approve " & varDeliveryNote & " - return to facility",
+                          "<p>Hello,</p>" &
+                          "<p>Please help to approve the request: " & varDeliveryNote & " - parts requested to return to facility.</p>" &
+                          varLineItemsTable &
+                          "<p>Regards,<br>" & User().FullName & "</p>" &
+                          "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>",
+                          {Cc: varLogisticsTo}
+                      )
+                  );
+
+                  Clear(colReturnSelections);
+                  Notify("Return submitted to Engineering — Delivery Note " & varDeliveryNote, NotificationType.Success);
+                  Navigate(scrHome, ScreenTransition.Fade)
+              )
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -245,9 +249,7 @@ Screens:
             RadiusBottomRight: =0
             RadiusTopLeft: =0
             RadiusTopRight: =0
-            Text: |-
-              ="Submit
-              "
+            Text: ="Submit"
             X: =86
             Y: =641
       - Button4_1:

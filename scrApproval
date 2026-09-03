@@ -52,7 +52,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =431
-            Items: =Filter('3PL request', !IsBlank(drpDeliveryNote1.Selected.Value) && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value))
+            Items: =Filter('3PL request', !IsBlank(drpDeliveryNote1.Selected.Value) && ((Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)))
             TemplateSize: =42
             Width: =1171
             X: =69
@@ -246,7 +246,7 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
-              =ClearCollect(colToApprove, Filter('3PL request', DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value));
+              =ClearCollect(colToApprove, Filter('3PL request', (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)));
 
               Set(varSelectedNote, drpDeliveryNote1.Selected.Value);
 
@@ -297,7 +297,7 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
-              =ClearCollect(colToReject, Filter('3PL request', DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value));
+              =ClearCollect(colToReject, Filter('3PL request', (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)));
 
               ForAll(colToReject, Patch('3PL request', {ID: ID}, {
                   Status: "Rejected",

@@ -41,9 +41,7 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             FocusedBorderThickness: =4
             Font: =Font.'Segoe UI'
-            Text: |-
-              =
-              varSelectedItem.'Sales Order'
+            Text: =varSelectedItem.'Sales Order'
             Width: =208
             X: =78
             Y: =177
@@ -226,7 +224,7 @@ Screens:
             FocusedBorderThickness: =4
             Font: =Font.'Segoe UI'
             Size: =16
-            Text: ="CurrenStatus"
+            Text: ="Current Status"
             X: =752
             Y: =123
       - Label5_24:

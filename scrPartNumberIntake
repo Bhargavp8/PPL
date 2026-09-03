@@ -21,7 +21,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =43
             Size: =25
-            Text: ="Request 3 PL service - "
+            Text: ="Request 3PL Service"
             Width: =345
             X: =56
             Y: =40
@@ -249,48 +249,52 @@ Screens:
               =Set(varBatchID, GUID());
               ClearCollect(colToSubmit, Filter(colLineItems, !IsBlank(SalesOrder) && !IsBlank(PartNumber)));
 
-              Set(varNextID, Max('3PL request', ID) + 1);
-              Set(varDeliveryNote, "S-" & Text(varNextID, "0000"));
+              If(CountRows(colToSubmit) = 0,
+                  Notify("Enter at least one line with a sales order and part number before submitting.", NotificationType.Error),
 
-              ForAll(colToSubmit,
-                  Patch('3PL request', Defaults('3PL request'), {
-                      BatchID: Text(varBatchID),
-                      DeliveryNoteNumber: varDeliveryNote,
-                      'Sales Order': Text(SalesOrder),
-                      'Part Number': Text(PartNumber),
-                      Description: Text(ItemDescription),
-                      Qty: Qty,
-                      TrolleyNumber: Text(Trolley),
-                      Remark: Remark,
-                      Status: "Pending Manager Approval",
-                      SendRequestedBy: User().Email,
-                      DateRequestedWarehouse: Now()
-                  })
-              );
+                  Set(varNextID, Max('3PL request', ID) + 1);
+                  Set(varDeliveryNote, "S-" & Text(varNextID, "0000"));
 
-              Set(varLineItemsTable,
-                  "<table style='border-collapse:collapse;width:100%;font-family:sans-serif;font-size:13px;'>" &
-                  "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Description</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Trolley No.</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
-                  Concat(colToSubmit, "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & SalesOrder & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & PartNumber & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & ItemDescription & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Trolley & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Remark & "</td></tr>") &
-                  "</table>"
-              );
+                  ForAll(colToSubmit,
+                      Patch('3PL request', Defaults('3PL request'), {
+                          BatchID: Text(varBatchID),
+                          DeliveryNoteNumber: varDeliveryNote,
+                          'Sales Order': Text(SalesOrder),
+                          'Part Number': Text(PartNumber),
+                          Description: Text(ItemDescription),
+                          Qty: Qty,
+                          TrolleyNumber: Text(Trolley),
+                          Remark: Remark,
+                          Status: "Pending Manager Approval",
+                          SendRequestedBy: User().Email,
+                          DateRequestedWarehouse: Now()
+                      })
+                  );
 
-              ForAll(Filter('3PL Approvers', Role = "Manager") As Mgr,
-                  Office365Outlook.SendEmailV2(
-                      Mgr.Email,
-                      "Action required: Approve " & varDeliveryNote & " - send to warehouse",
-                      "<p>Hello " & Mgr.'Name ({Name})' & ",</p>" &
-                      "<p>Please help to approve the request: " & varDeliveryNote & " - parts requested to send to warehouse.</p>" &
-                      varLineItemsTable &
-                      "<p>Regards,<br>" & User().FullName & "</p>" &
-                      "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>"
-                  )
-              );
+                  Set(varLineItemsTable,
+                      "<table style='border-collapse:collapse;width:100%;font-family:sans-serif;font-size:13px;'>" &
+                      "<tr><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Sales Order</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Part Number</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Description</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Qty</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Trolley No.</th><th style='border:1px solid #999;padding:6px 10px;background-color:#f2f2f2;text-align:left;'>Remark</th></tr>" &
+                      Concat(colToSubmit, "<tr><td style='border:1px solid #999;padding:6px 10px;'>" & SalesOrder & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & PartNumber & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & ItemDescription & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Qty & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Trolley & "</td><td style='border:1px solid #999;padding:6px 10px;'>" & Remark & "</td></tr>") &
+                      "</table>"
+                  );
 
-              Clear(colLineItems);
-              Clear(colToSubmit);
-              Notify("Submitted for approval — Delivery Note " & varDeliveryNote, NotificationType.Success);
-              Navigate(scrHome, ScreenTransition.Fade)
+                  ForAll(Filter('3PL Approvers', Role = "Manager") As Mgr,
+                      Office365Outlook.SendEmailV2(
+                          Mgr.Email,
+                          "Action required: Approve " & varDeliveryNote & " - send to warehouse",
+                          "<p>Hello " & Mgr.'Name ({Name})' & ",</p>" &
+                          "<p>Please help to approve the request: " & varDeliveryNote & " - parts requested to send to warehouse.</p>" &
+                          varLineItemsTable &
+                          "<p>Regards,<br>" & User().FullName & "</p>" &
+                          "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>"
+                      )
+                  );
+
+                  Clear(colLineItems);
+                  Clear(colToSubmit);
+                  Notify("Submitted for approval — Delivery Note " & varDeliveryNote, NotificationType.Success);
+                  Navigate(scrHome, ScreenTransition.Fade)
+              )
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)

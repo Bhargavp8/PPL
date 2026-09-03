@@ -18,7 +18,7 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Height: =43
             Size: =30
-            Text: ="Update Status  "
+            Text: ="Update Status"
             Width: =795
             X: =56
             Y: =40
@@ -72,10 +72,6 @@ Screens:
                   If(Status = "Requested (to Warehouse)", DeliveryNoteNumber, ReturnDeliveryNoteNumber)
               )
             Items.Value: =Value
-            OnChange: |-
-              =Set(varSelectedStatus,
-                  LookUp('3PL request', DeliveryNoteNumber = drpDeliveryNote.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value).Status
-              )
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =5
@@ -93,7 +89,7 @@ Screens:
           Properties:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =363
-            Items: =Filter('3PL request', DeliveryNoteNumber = drpDeliveryNote.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value)
+            Items: =Filter('3PL request', (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") || (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)"))
             TemplateSize: =49
             Width: =1128
             X: =75
@@ -200,7 +196,7 @@ Screens:
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
               =ClearCollect(colToUpdate,
-                  Filter('3PL request', DeliveryNoteNumber = drpDeliveryNote.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value)
+                  Filter('3PL request', (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") || (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)"))
               );
 
               Set(varNewStatus, If(First(colToUpdate).Status = "Requested (to Warehouse)", "In Storage", "Pending Inspector Approval"));
@@ -221,7 +217,7 @@ Screens:
             RadiusTopRight: =0
             Text: |-
               =If(
-                  LookUp('3PL request', DeliveryNoteNumber = drpDeliveryNote.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value).Status = "Requested (to Warehouse)",
+                  LookUp('3PL request', (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") || (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")).Status = "Requested (to Warehouse)",
                   "Confirm Sent to Warehouse",
                   "Confirm Returned to Facility"
               )
