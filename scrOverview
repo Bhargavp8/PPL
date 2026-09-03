@@ -411,10 +411,11 @@ Screens:
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
               =Set(varCSVContent,
-                  "Sales Order,Part Number,Qty,Trolley Number,Status,DeliveryNoteNumber,ReturnDeliveryNoteNumber,Remark,ReturnRemark,SendRequestedBy,ReturnRequestedBy,SendApprovedBy,ReturnApprovedBy,InspectorApprovedBy,RejectedBy,DateRequestedWarehouse,DateInStorage,DateRequestedFacility,DateClosed,DateRejected,EngineerApprovedBy,DateEngineerApproved,ReceivedBy,DateReceived" & Char(13) & Char(10) &
+                  "Sales Order,Part Number,Description,Qty,Trolley Number,Status,DeliveryNoteNumber,ReturnDeliveryNoteNumber,Remark,ReturnRemark,SendRequestedBy,ReturnRequestedBy,SendApprovedBy,ReturnApprovedBy,InspectorApprovedBy,RejectedBy,DateRequestedWarehouse,DateInStorage,DateRequestedFacility,DateClosed,DateRejected,EngineerApprovedBy,DateEngineerApproved,ReceivedBy,DateReceived" & Char(13) & Char(10) &
                   Concat('3PL request',
                       """" & Substitute('Sales Order', """", """""") & """," &
                       """" & Substitute('Part Number', """", """""") & """," &
+                      """" & Substitute(Description, """", """""") & """," &
                       Qty & "," &
                       """" & Substitute(TrolleyNumber, """", """""") & """," &
                       """" & Status & """," &

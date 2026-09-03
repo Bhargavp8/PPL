@@ -49,7 +49,7 @@ Screens:
             DisabledColor: =RGBA(161, 159, 157, 1)
             DisabledFill: =RGBA(242, 242, 241, 0)
             Font: =Font.'Segoe UI'
-            HintText: ="Search by sales order, part number, remark or trolley"
+            HintText: ="Search by sales order, part number, description, remark or trolley"
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(255, 255, 255, 1)
@@ -172,7 +172,7 @@ Screens:
                       Status = "Returned (Awaiting Receipt)" &&
                       ReturnRequestedBy = User().Email
                   ),
-                  txtRcvSearch.Text, 'Sales Order', 'Part Number', ReturnRemark, TrolleyNumber
+                  txtRcvSearch.Text, 'Sales Order', 'Part Number', Description, ReturnRemark, TrolleyNumber
               )
             TemplateSize: =50
             Width: =1189
