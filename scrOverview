@@ -19,7 +19,7 @@ Screens:
             Height: =47
             Size: =35
             Text: ="Overview"
-            Width: =380
+            Width: =150
             X: =56
             Y: =40
       - Button5:
@@ -46,6 +46,30 @@ Screens:
             RadiusTopRight: =0
             Text: ="Close"
             X: =1139
+            Y: =47
+      - txtOvSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Color: =RGBA(50, 49, 48, 1)
+            Default: =""
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Font: =Font.'Segoe UI'
+            HintText: ="Search part, order, description, trolley, note or status"
+            HoverBorderColor: =RGBA(16, 110, 190, 1)
+            HoverColor: =RGBA(50, 49, 48, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =RGBA(0, 120, 212, 1)
+            PressedColor: =RGBA(50, 49, 48, 1)
+            PressedFill: =RGBA(255, 255, 255, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =340
+            X: =240
             Y: =47
       - drpStatusFilter:
           Control: Classic/DropDown@2.3.1
@@ -78,7 +102,8 @@ Screens:
             PressedFill: =RGBA(0, 120, 212, 1)
             SelectionColor: =RGBA(50, 49, 48, 1)
             SelectionFill: =RGBA(0, 120, 212, 1)
-            X: =464
+            Width: =220
+            X: =600
             Y: =47
       - Gallery1:
           Control: Gallery@2.15.0
@@ -87,10 +112,15 @@ Screens:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =565
             Items: |-
-              =Switch(drpStatusFilter.Selected.Value,
-                  "All", '3PL request',
-                  "Active", Filter('3PL request', Status <> "Closed" && Status <> "Received"),
-                  Filter('3PL request', Status = drpStatusFilter.Selected.Value)
+              =Search(
+                  Switch(drpStatusFilter.Selected.Value,
+                      "All", '3PL request',
+                      "Active", Filter('3PL request', Status <> "Closed" && Status <> "Received"),
+                      Filter('3PL request', Status = drpStatusFilter.Selected.Value)
+                  ),
+                  txtOvSearch.Text,
+                  'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark,
+                  DeliveryNoteNumber, ReturnDeliveryNoteNumber, Status
               )
             OnSelect: |-
               =Set(varSelectedItem, ThisItem);
@@ -268,6 +298,27 @@ Screens:
                     )
                   Width: =224
                   X: =1078
+      - lblOvEmpty:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =15
+            Text: |-
+              =If(IsBlank(txtOvSearch.Text),
+                  "Nothing in this status.",
+                  "No items match your search in this status."
+              )
+            Visible: =CountRows(Gallery1.AllItems) = 0
+            Width: =560
+            X: =40
+            Y: =200
       - Label5_3:
           Control: Label@2.5.1
           Properties:
@@ -449,7 +500,7 @@ Screens:
             RadiusBottomRight: =0
             RadiusTopLeft: =0
             RadiusTopRight: =0
-            Text: ="Download as Excel"
+            Text: ="Download all as Excel"
             Width: =180
             X: =864
             Y: =47
