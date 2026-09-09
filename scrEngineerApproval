@@ -6,6 +6,7 @@ Screens:
       OnVisible: |-
         =ClearCollect(colEngineerRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && (Role = "Engineer" || Role = "Super User")));
         Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")));
+        Set(varIsEngineer, CountRows(colEngineerRoles) > 0);
         Clear(colEngExcluded)
     Children:
       - lblEngTitle:
@@ -49,7 +50,7 @@ Screens:
               =Distinct(
                   Search(
                       Filter('3PL request',
-                          Status = "Pending Engineer Approval" && CountRows(colEngineerRoles) > 0
+                          Status = "Pending Engineer Approval" && varIsEngineer
                       ),
                       txtEngSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, ReturnRemark, ReturnDeliveryNoteNumber
                   ),
