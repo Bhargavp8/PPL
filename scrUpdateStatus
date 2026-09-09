@@ -69,7 +69,10 @@ Screens:
             HoverFill: =RGBA(245, 245, 245, 1)
             Items: |-
               =Distinct(
-                  Filter('3PL request', Status = "Requested (to Warehouse)" || Status = "Requested (to Facility)"),
+                  Search(
+                      Filter('3PL request', Status = "Requested (to Warehouse)" || Status = "Requested (to Facility)"),
+                      txtUpdSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark, DeliveryNoteNumber, ReturnDeliveryNoteNumber
+                  ),
                   If(Status = "Requested (to Warehouse)", DeliveryNoteNumber, ReturnDeliveryNoteNumber)
               )
             Items.Value: =Value
@@ -83,7 +86,8 @@ Screens:
             PressedFill: =RGBA(0, 120, 212, 1)
             SelectionColor: =RGBA(50, 49, 48, 1)
             SelectionFill: =RGBA(0, 120, 212, 1)
-            X: =317
+            Width: =300
+            X: =530
             Y: =126
       - txtUpdSearch:
           Control: Classic/TextInput@2.3.2
@@ -95,7 +99,7 @@ Screens:
             DisabledColor: =RGBA(161, 159, 157, 1)
             DisabledFill: =RGBA(242, 242, 241, 0)
             Font: =Font.'Segoe UI'
-            HintText: ="Search within this note"
+            HintText: ="Search part, order, description, trolley or note"
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(255, 255, 255, 1)
@@ -107,7 +111,7 @@ Screens:
             RadiusTopLeft: =0
             RadiusTopRight: =0
             Width: =300
-            X: =620
+            X: =56
             Y: =126
       - lblHdrUpdTick:
           Control: Label@2.5.1
@@ -138,7 +142,7 @@ Screens:
                       (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") ||
                       (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")
                   ),
-                  txtUpdSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark
+                  txtUpdSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark, DeliveryNoteNumber, ReturnDeliveryNoteNumber
               )
             TemplateSize: =49
             Width: =1128
@@ -406,7 +410,7 @@ Screens:
             Font: =Font.'Segoe UI'
             Height: =33
             Size: =17
-            Text: ="Search by delivery note:"
-            Width: =314
-            X: =56
+            Text: ="Delivery note:"
+            Width: =145
+            X: =382
             Y: =126

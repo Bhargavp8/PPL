@@ -209,7 +209,7 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Qty"
-            Width: =86
+            Width: =66
             X: =486
             Y: =123
       - Label5_23:

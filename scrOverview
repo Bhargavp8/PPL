@@ -19,7 +19,7 @@ Screens:
             Height: =47
             Size: =35
             Text: ="Overview"
-            Width: =486
+            Width: =380
             X: =56
             Y: =40
       - Button5:

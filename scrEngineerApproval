@@ -47,8 +47,11 @@ Screens:
             HoverFill: =RGBA(245, 245, 245, 1)
             Items: |-
               =Distinct(
-                  Filter('3PL request',
-                      Status = "Pending Engineer Approval" && CountRows(colEngineerRoles) > 0
+                  Search(
+                      Filter('3PL request',
+                          Status = "Pending Engineer Approval" && CountRows(colEngineerRoles) > 0
+                      ),
+                      txtEngSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, ReturnRemark, ReturnDeliveryNoteNumber
                   ),
                   ReturnDeliveryNoteNumber
               )
@@ -64,7 +67,7 @@ Screens:
             SelectionColor: =RGBA(50, 49, 48, 1)
             SelectionFill: =RGBA(0, 120, 212, 1)
             Width: =300
-            X: =76
+            X: =404
             Y: =112
       - lblEngContext:
           Control: Label@2.5.1
@@ -102,7 +105,7 @@ Screens:
             DisabledColor: =RGBA(161, 159, 157, 1)
             DisabledFill: =RGBA(242, 242, 241, 0)
             Font: =Font.'Segoe UI'
-            HintText: ="Search within this note"
+            HintText: ="Search part, order, description, trolley or note"
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(255, 255, 255, 1)
@@ -114,7 +117,7 @@ Screens:
             RadiusTopLeft: =0
             RadiusTopRight: =0
             Width: =300
-            X: =404
+            X: =76
             Y: =112
       - lblEngHdrTick:
           Control: Label@2.5.1
@@ -226,7 +229,7 @@ Screens:
                       Status = "Pending Engineer Approval" &&
                       ReturnDeliveryNoteNumber = drpEngNote.Selected.Value
                   ),
-                  txtEngSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, ReturnRemark
+                  txtEngSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, ReturnRemark, ReturnDeliveryNoteNumber
               )
             TemplateSize: =42
             Width: =1171
