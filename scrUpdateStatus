@@ -3,6 +3,7 @@ Screens:
     Properties:
       Fill: =RGBA(80, 54, 102, 1)
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: =Clear(colUpdExcluded)
     Children:
       - Label4_3:
           Control: Label@2.5.1
@@ -72,6 +73,7 @@ Screens:
                   If(Status = "Requested (to Warehouse)", DeliveryNoteNumber, ReturnDeliveryNoteNumber)
               )
             Items.Value: =Value
+            OnChange: =Clear(colUpdExcluded)
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =5
@@ -83,13 +85,61 @@ Screens:
             SelectionFill: =RGBA(0, 120, 212, 1)
             X: =317
             Y: =126
+      - txtUpdSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Color: =RGBA(50, 49, 48, 1)
+            Default: =""
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Font: =Font.'Segoe UI'
+            HintText: ="Search within this note"
+            HoverBorderColor: =RGBA(16, 110, 190, 1)
+            HoverColor: =RGBA(50, 49, 48, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =RGBA(0, 120, 212, 1)
+            PressedColor: =RGBA(50, 49, 48, 1)
+            PressedFill: =RGBA(255, 255, 255, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =300
+            X: =620
+            Y: =126
+      - lblHdrUpdTick:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Size: =16
+            Text: ="Include"
+            Width: =120
+            X: =1075
+            Y: =203
       - galUpdateItems:
           Control: Gallery@2.15.0
           Variant: Vertical
           Properties:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =363
-            Items: =Filter('3PL request', (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") || (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)"))
+            Items: |-
+              =Search(
+                  Filter('3PL request',
+                      (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") ||
+                      (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")
+                  ),
+                  txtUpdSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark
+              )
             TemplateSize: =49
             Width: =1128
             X: =75
@@ -158,6 +208,35 @@ Screens:
                   Text: =ThisItem.TrolleyNumber
                   Width: =130
                   X: =530
+            - chkUpd:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  CheckboxBackgroundFill: =RGBA(236, 236, 235, 1)
+                  CheckboxBorderColor: =RGBA(96, 94, 92, 1)
+                  CheckmarkFill: =RGBA(0, 120, 212, 1)
+                  Color: =RGBA(50, 49, 48, 1)
+                  Default: =IsBlank(LookUp(colUpdExcluded, ID = ThisItem.ID))
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  Height: =23
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  HoverColor: =RGBA(50, 49, 48, 1)
+                  HoverFill: =RGBA(0, 0, 0, 0)
+                  OnCheck: =Remove(colUpdExcluded, LookUp(colUpdExcluded, ID = ThisItem.ID))
+                  OnUncheck: |-
+                    =Collect(colUpdExcluded, {ID: ThisItem.ID})
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedColor: =RGBA(50, 49, 48, 1)
+                  PressedFill: =RGBA(0, 0, 0, 0)
+                  Text: =
+                  Width: =40
+                  X: =1000
+                  Y: =12
             - Label11_2:
                 Control: Label@2.5.1
                 Properties:
@@ -196,18 +275,29 @@ Screens:
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
               =ClearCollect(colToUpdate,
-                  Filter('3PL request', (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") || (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)"))
+                  Filter(
+                      Filter('3PL request',
+                          (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") ||
+                          (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")
+                      ) As Row,
+                      IsBlank(LookUp(colUpdExcluded, ID = Row.ID))
+                  )
               );
 
-              Set(varNewStatus, If(First(colToUpdate).Status = "Requested (to Warehouse)", "In Storage", "Pending Inspector Approval"));
+              If(CountRows(colToUpdate) = 0,
+                  Notify("Tick at least one line to confirm.", NotificationType.Error),
 
-              If(varNewStatus = "In Storage",
-                  ForAll(colToUpdate, Patch('3PL request', {ID: ID}, {Status: varNewStatus, DateInStorage: Now()})),
-                  ForAll(colToUpdate, Patch('3PL request', {ID: ID}, {Status: varNewStatus}))
-              );
+                  Set(varNewStatus, If(First(colToUpdate).Status = "Requested (to Warehouse)", "In Storage", "Pending Inspector Approval"));
 
-              Notify("Updated to " & varNewStatus, NotificationType.Success);
-              Reset(drpDeliveryNote)
+                  If(varNewStatus = "In Storage",
+                      ForAll(colToUpdate, Patch('3PL request', {ID: ID}, {Status: varNewStatus, DateInStorage: Now()})),
+                      ForAll(colToUpdate, Patch('3PL request', {ID: ID}, {Status: varNewStatus}))
+                  );
+
+                  Notify(CountRows(colToUpdate) & " line(s) updated to " & varNewStatus, NotificationType.Success);
+                  Clear(colUpdExcluded);
+                  Reset(drpDeliveryNote)
+              )
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)

@@ -5,7 +5,8 @@ Screens:
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
       OnVisible: |-
         =ClearCollect(colEngineerRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && (Role = "Engineer" || Role = "Super User")));
-        Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")))
+        Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")));
+        Clear(colEngExcluded)
     Children:
       - lblEngTitle:
           Control: Label@2.5.1
@@ -52,6 +53,7 @@ Screens:
                   ReturnDeliveryNoteNumber
               )
             Items.Value: =Value
+            OnChange: =Clear(colEngExcluded)
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =5
@@ -87,9 +89,50 @@ Screens:
                       )
                   ) & " line items)"
               )
-            Width: =620
-            X: =404
+            Width: =470
+            X: =730
             Y: =118
+      - txtEngSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Color: =RGBA(50, 49, 48, 1)
+            Default: =""
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Font: =Font.'Segoe UI'
+            HintText: ="Search within this note"
+            HoverBorderColor: =RGBA(16, 110, 190, 1)
+            HoverColor: =RGBA(50, 49, 48, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =RGBA(0, 120, 212, 1)
+            PressedColor: =RGBA(50, 49, 48, 1)
+            PressedFill: =RGBA(255, 255, 255, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =300
+            X: =404
+            Y: =112
+      - lblEngHdrTick:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Size: =16
+            Text: ="Include"
+            Width: =120
+            X: =1119
+            Y: =182
       - lblEngHdrSO:
           Control: Label@2.5.1
           Properties:
@@ -177,10 +220,13 @@ Screens:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =431
             Items: |-
-              =Filter('3PL request',
-                  !IsBlank(drpEngNote.Selected.Value) &&
-                  Status = "Pending Engineer Approval" &&
-                  ReturnDeliveryNoteNumber = drpEngNote.Selected.Value
+              =Search(
+                  Filter('3PL request',
+                      !IsBlank(drpEngNote.Selected.Value) &&
+                      Status = "Pending Engineer Approval" &&
+                      ReturnDeliveryNoteNumber = drpEngNote.Selected.Value
+                  ),
+                  txtEngSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, ReturnRemark
               )
             TemplateSize: =42
             Width: =1171
@@ -254,6 +300,35 @@ Screens:
                   Width: =135
                   X: =520
                   Y: =2
+            - chkEng:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  CheckboxBackgroundFill: =RGBA(236, 236, 235, 1)
+                  CheckboxBorderColor: =RGBA(96, 94, 92, 1)
+                  CheckmarkFill: =RGBA(0, 120, 212, 1)
+                  Color: =RGBA(50, 49, 48, 1)
+                  Default: =IsBlank(LookUp(colEngExcluded, ID = ThisItem.ID))
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  Height: =23
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  HoverColor: =RGBA(50, 49, 48, 1)
+                  HoverFill: =RGBA(0, 0, 0, 0)
+                  OnCheck: =Remove(colEngExcluded, LookUp(colEngExcluded, ID = ThisItem.ID))
+                  OnUncheck: |-
+                    =Collect(colEngExcluded, {ID: ThisItem.ID})
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedColor: =RGBA(50, 49, 48, 1)
+                  PressedFill: =RGBA(0, 0, 0, 0)
+                  Text: =
+                  Width: =40
+                  X: =1050
+                  Y: =9
             - lblEngRowRemark:
                 Control: Label@2.5.1
                 Properties:
@@ -290,14 +365,17 @@ Screens:
               =Set(varEngNote, drpEngNote.Selected.Value);
 
               ClearCollect(colEngApprove,
-                  Filter('3PL request',
-                      Status = "Pending Engineer Approval" &&
-                      ReturnDeliveryNoteNumber = varEngNote
+                  Filter(
+                      Filter('3PL request',
+                          Status = "Pending Engineer Approval" &&
+                          ReturnDeliveryNoteNumber = varEngNote
+                      ) As Row,
+                      IsBlank(LookUp(colEngExcluded, ID = Row.ID))
                   )
               );
 
               If(CountRows(colEngApprove) = 0,
-                  Notify("Nothing to approve for " & varEngNote & ".", NotificationType.Error),
+                  Notify("Tick at least one line to approve.", NotificationType.Error),
 
                   ForAll(colEngApprove,
                       Patch('3PL request', {ID: ID}, {
@@ -306,6 +384,8 @@ Screens:
                           DateEngineerApproved: Now()
                       })
                   );
+
+                  SendDeliveryNoteEmail.Run(varEngNote);
 
                   Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
                   Set(varRequestorTo, Concat(Filter(Distinct(colEngApprove, ReturnRequestedBy), !IsBlank(Value)), Value, ";"));
@@ -334,7 +414,7 @@ Screens:
                       )
                   );
 
-                  Notify("Approved - " & varEngNote & ". Awaiting receipt.", NotificationType.Success);
+                  Notify("Approved " & CountRows(colEngApprove) & " line(s) on " & varEngNote & ". Awaiting receipt.", NotificationType.Success);
                   Navigate(scrHome, ScreenTransition.Fade)
               )
             PressedBorderColor: =RGBA(0, 69, 120, 1)
@@ -367,14 +447,17 @@ Screens:
               =Set(varEngNote, drpEngNote.Selected.Value);
 
               ClearCollect(colEngReject,
-                  Filter('3PL request',
-                      Status = "Pending Engineer Approval" &&
-                      ReturnDeliveryNoteNumber = varEngNote
+                  Filter(
+                      Filter('3PL request',
+                          Status = "Pending Engineer Approval" &&
+                          ReturnDeliveryNoteNumber = varEngNote
+                      ) As Row,
+                      IsBlank(LookUp(colEngExcluded, ID = Row.ID))
                   )
               );
 
               If(CountRows(colEngReject) = 0,
-                  Notify("Nothing to reject for " & varEngNote & ".", NotificationType.Error),
+                  Notify("Tick at least one line to reject.", NotificationType.Error),
 
                   ForAll(colEngReject,
                       Patch('3PL request', {ID: ID}, {
@@ -384,7 +467,7 @@ Screens:
                       })
                   );
 
-                  Notify("Rejected - " & varEngNote, NotificationType.Success);
+                  Notify("Rejected " & CountRows(colEngReject) & " line(s) on " & varEngNote, NotificationType.Success);
                   Navigate(scrHome, ScreenTransition.Fade)
               )
             PressedBorderColor: =RGBA(0, 69, 120, 1)

@@ -5,7 +5,8 @@ Screens:
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
       OnVisible: |-
         =ClearCollect(colMyRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email))));
-        Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")))
+        Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")));
+        Clear(colApprExcluded)
     Children:
       - drpDeliveryNote1:
           Control: Classic/DropDown@2.3.1
@@ -35,6 +36,7 @@ Screens:
                   If(Status = "Pending Inspector Approval" || !IsBlank(ReturnDeliveryNoteNumber), ReturnDeliveryNoteNumber, DeliveryNoteNumber)
               )
             Items.Value: =Value
+            OnChange: =Clear(colApprExcluded)
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =5
@@ -44,7 +46,32 @@ Screens:
             PressedFill: =RGBA(0, 120, 212, 1)
             SelectionColor: =RGBA(50, 49, 48, 1)
             SelectionFill: =RGBA(0, 120, 212, 1)
+            Width: =300
             X: =76
+            Y: =112
+      - txtApprSearch:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            Color: =RGBA(50, 49, 48, 1)
+            Default: =""
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Font: =Font.'Segoe UI'
+            HintText: ="Search within this note"
+            HoverBorderColor: =RGBA(16, 110, 190, 1)
+            HoverColor: =RGBA(50, 49, 48, 1)
+            HoverFill: =RGBA(255, 255, 255, 1)
+            PressedBorderColor: =RGBA(0, 120, 212, 1)
+            PressedColor: =RGBA(50, 49, 48, 1)
+            PressedFill: =RGBA(255, 255, 255, 1)
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =300
+            X: =404
             Y: =112
       - galApprovalItems:
           Control: Gallery@2.15.0
@@ -52,7 +79,15 @@ Screens:
           Properties:
             BorderColor: =RGBA(245, 245, 245, 1)
             Height: =431
-            Items: =Filter('3PL request', !IsBlank(drpDeliveryNote1.Selected.Value) && ((Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)))
+            Items: |-
+              =Search(
+                  Filter('3PL request',
+                      !IsBlank(drpDeliveryNote1.Selected.Value) &&
+                      (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") &&
+                      (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)
+                  ),
+                  txtApprSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark
+              )
             TemplateSize: =42
             Width: =1171
             X: =69
@@ -121,6 +156,35 @@ Screens:
                   Width: =135
                   X: =520
                   Y: =2
+            - chkAppr:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  CheckboxBackgroundFill: =RGBA(236, 236, 235, 1)
+                  CheckboxBorderColor: =RGBA(96, 94, 92, 1)
+                  CheckmarkFill: =RGBA(0, 120, 212, 1)
+                  Color: =RGBA(50, 49, 48, 1)
+                  Default: =IsBlank(LookUp(colApprExcluded, ID = ThisItem.ID))
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  Height: =23
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  HoverColor: =RGBA(50, 49, 48, 1)
+                  HoverFill: =RGBA(0, 0, 0, 0)
+                  OnCheck: =Remove(colApprExcluded, LookUp(colApprExcluded, ID = ThisItem.ID))
+                  OnUncheck: |-
+                    =Collect(colApprExcluded, {ID: ThisItem.ID})
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedColor: =RGBA(50, 49, 48, 1)
+                  PressedFill: =RGBA(0, 0, 0, 0)
+                  Text: =
+                  Width: =40
+                  X: =1050
+                  Y: =9
             - Label5_33:
                 Control: Label@2.5.1
                 Properties:
@@ -137,6 +201,22 @@ Screens:
                   Width: =358
                   X: =655
                   Y: =2
+      - lblHdrApprTick:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Size: =16
+            Text: ="Include"
+            Width: =120
+            X: =1119
+            Y: =182
       - Label6:
           Control: Label@2.5.1
           Properties:
@@ -154,8 +234,8 @@ Screens:
                   "Inspector Approval — Closing",
                   If(IsBlank(First(galApprovalItems.AllItems).ReturnDeliveryNoteNumber), "Requested to warehouse Approval", "Requested Return from warehouse Approval")
               )
-            Width: =501
-            X: =404
+            Width: =470
+            X: =730
             Y: =112
       - Label5_26:
           Control: Label@2.5.1
@@ -246,9 +326,20 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
-              =ClearCollect(colToApprove, Filter('3PL request', (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)));
+              =Set(varSelectedNote, drpDeliveryNote1.Selected.Value);
 
-              Set(varSelectedNote, drpDeliveryNote1.Selected.Value);
+              ClearCollect(colToApprove,
+                  Filter(
+                      Filter('3PL request',
+                          (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") &&
+                          (DeliveryNoteNumber = varSelectedNote || ReturnDeliveryNoteNumber = varSelectedNote)
+                      ) As Row,
+                      IsBlank(LookUp(colApprExcluded, ID = Row.ID))
+                  )
+              );
+
+              If(CountRows(colToApprove) = 0,
+                  Notify("Tick at least one line to approve.", NotificationType.Error),
 
               If(
                   First(colToApprove).Status = "Pending Inspector Approval",
@@ -270,8 +361,9 @@ Screens:
                   })); SendDeliveryNoteEmail.Run(varSelectedNote)
               );
 
-              Notify("Approved — " & varSelectedNote, NotificationType.Success);
+              Notify("Approved " & CountRows(colToApprove) & " line(s) on " & varSelectedNote, NotificationType.Success);
               Navigate(scrHome, ScreenTransition.Fade)
+              )
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -297,16 +389,30 @@ Screens:
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
             OnSelect: |-
-              =ClearCollect(colToReject, Filter('3PL request', (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)));
+              =Set(varSelectedNote, drpDeliveryNote1.Selected.Value);
 
-              ForAll(colToReject, Patch('3PL request', {ID: ID}, {
-                  Status: "Rejected",
-                  RejectedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm"),
-                  DateRejected: Now()
-              }));
+              ClearCollect(colToReject,
+                  Filter(
+                      Filter('3PL request',
+                          (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") &&
+                          (DeliveryNoteNumber = varSelectedNote || ReturnDeliveryNoteNumber = varSelectedNote)
+                      ) As Row,
+                      IsBlank(LookUp(colApprExcluded, ID = Row.ID))
+                  )
+              );
 
-              Notify("Rejected — " & drpDeliveryNote1.Selected.Value, NotificationType.Success);
-              Navigate(scrHome, ScreenTransition.Fade)
+              If(CountRows(colToReject) = 0,
+                  Notify("Tick at least one line to reject.", NotificationType.Error),
+
+                  ForAll(colToReject, Patch('3PL request', {ID: ID}, {
+                      Status: "Rejected",
+                      RejectedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm"),
+                      DateRejected: Now()
+                  }));
+
+                  Notify("Rejected " & CountRows(colToReject) & " line(s) on " & varSelectedNote, NotificationType.Success);
+                  Navigate(scrHome, ScreenTransition.Fade)
+              )
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
