@@ -78,8 +78,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Sales Order"
-            Width: =140
-            X: =70
+            Width: =100
+            X: =78
             Y: =182
       - lblRcvHdrPN:
           Control: Label@2.5.1
@@ -94,8 +94,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Part Number"
-            Width: =140
-            X: =294
+            Width: =120
+            X: =253
             Y: =182
       - lblRcvHdrQty:
           Control: Label@2.5.1
@@ -110,8 +110,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Qty"
-            Width: =70
-            X: =518
+            Width: =60
+            X: =453
             Y: =182
       - lblRcvHdrTrolley:
           Control: Label@2.5.1
@@ -126,8 +126,8 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Trolley No."
-            Width: =120
-            X: =598
+            Width: =110
+            X: =518
             Y: =182
       - lblRcvHdrNote:
           Control: Label@2.5.1
@@ -142,8 +142,24 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =16
             Text: ="Return note"
-            Width: =180
-            X: =728
+            Width: =120
+            X: =633
+            Y: =182
+      - lblRcvHdrRemark:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Size: =16
+            Text: ="Return remark"
+            Width: =200
+            X: =758
             Y: =182
       - lblRcvHdrTick:
           Control: Label@2.5.1
@@ -159,8 +175,8 @@ Screens:
             FontWeight: =FontWeight.Bold
             Size: =16
             Text: ="Tick when received"
-            Width: =246
-            X: =976
+            Width: =200
+            X: =993
             Y: =182
       - galReceiptItems:
           Control: Gallery@2.15.0
@@ -194,7 +210,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.'Sales Order'
-                  Width: =215
+                  Width: =175
             - lblRcvRowPN:
                 Control: Label@2.5.1
                 Properties:
@@ -208,8 +224,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.'Part Number'
-                  Width: =225
-                  X: =215
+                  Width: =200
+                  X: =175
             - lblRcvRowQty:
                 Control: Label@2.5.1
                 Properties:
@@ -223,8 +239,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.Qty
-                  Width: =80
-                  X: =440
+                  Width: =65
+                  X: =375
             - lblRcvRowTrolley:
                 Control: Label@2.5.1
                 Properties:
@@ -238,8 +254,8 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.TrolleyNumber
-                  Width: =130
-                  X: =520
+                  Width: =115
+                  X: =440
             - lblRcvRowNote:
                 Control: Label@2.5.1
                 Properties:
@@ -253,8 +269,23 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: =ThisItem.ReturnDeliveryNoteNumber
-                  Width: =235
-                  X: =650
+                  Width: =125
+                  X: =555
+            - lblRcvRowRemark:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 0)
+                  BorderStyle: =BorderStyle.None
+                  BorderThickness: =2
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(217, 217, 216, 1)
+                  FocusedBorderThickness: =4
+                  Font: =Font.'Segoe UI'
+                  OnSelect: =Select(Parent)
+                  Text: =ThisItem.ReturnRemark
+                  Width: =220
+                  X: =680
             - chkReceipt:
                 Control: Classic/CheckBox@2.1.0
                 Properties:
@@ -282,6 +313,7 @@ Screens:
                   PressedColor: =RGBA(50, 49, 48, 1)
                   PressedFill: =RGBA(0, 0, 0, 0)
                   Text: =
+                  Width: =40
                   X: =915
                   Y: =8
       - btnRcvConfirm:

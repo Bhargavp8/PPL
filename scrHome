@@ -129,7 +129,7 @@ Screens:
             HoverBorderColor: =RGBA(113, 111, 110, 1)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
-            OnSelect: =
+            OnSelect: =Navigate(scrPartNumberIntake, ScreenTransition.Fade)
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -199,34 +199,6 @@ Screens:
             Width: =230
             X: =58
             Y: =567
-      - Button2:
-          Control: Classic/Button@2.2.0
-          Group: Submit request
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderStyle: =BorderStyle.None
-            Color: =RGBA(0,0,0,0)
-            DisabledBorderColor: =RGBA(0, 0, 0, 0)
-            DisabledColor: =RGBA(161, 159, 157, 1)
-            DisabledFill: =RGBA(242, 242, 241, 0)
-            Fill: =RGBA(0,0,0,0)
-            Font: =Font.'Segoe UI'
-            Height: =200
-            HoverBorderColor: =RGBA(0, 0, 0, 0)
-            HoverColor: =RGBA(0,0,0,0)
-            HoverFill: =RGBA(0,0,0,0)
-            OnSelect: =Navigate(scrPartNumberIntake, ScreenTransition.Fade)
-            PressedBorderColor: =RGBA(0,0,0,0)
-            PressedColor: =RGBA(0,0,0,0)
-            PressedFill: =RGBA(0,0,0,0)
-            RadiusBottomLeft: =0
-            RadiusBottomRight: =0
-            RadiusTopLeft: =0
-            RadiusTopRight: =0
-            Text: =""
-            Width: =230
-            X: =58
-            Y: =438
       - Button1_1:
           Control: Classic/Button@2.2.0
           Group: Open transactions
@@ -244,7 +216,7 @@ Screens:
             HoverBorderColor: =RGBA(113, 111, 110, 1)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
-            OnSelect: =
+            OnSelect: =Navigate(scrOverview, ScreenTransition.Fade)
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -314,34 +286,6 @@ Screens:
             Width: =230
             X: =574
             Y: =567
-      - Button2_1:
-          Control: Classic/Button@2.2.0
-          Group: Open transactions
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderStyle: =BorderStyle.None
-            Color: =RGBA(0,0,0,0)
-            DisabledBorderColor: =RGBA(0, 0, 0, 0)
-            DisabledColor: =RGBA(161, 159, 157, 1)
-            DisabledFill: =RGBA(242, 242, 241, 0)
-            Fill: =RGBA(0,0,0,0)
-            Font: =Font.'Segoe UI'
-            Height: =200
-            HoverBorderColor: =RGBA(0, 0, 0, 0)
-            HoverColor: =RGBA(0,0,0,0)
-            HoverFill: =RGBA(0,0,0,0)
-            OnSelect: =Navigate(scrOverview, ScreenTransition.Fade)
-            PressedBorderColor: =RGBA(0,0,0,0)
-            PressedColor: =RGBA(0,0,0,0)
-            PressedFill: =RGBA(0,0,0,0)
-            RadiusBottomLeft: =0
-            RadiusBottomRight: =0
-            RadiusTopLeft: =0
-            RadiusTopRight: =0
-            Text: =""
-            Width: =230
-            X: =574
-            Y: =438
       - Button1_2:
           Control: Classic/Button@2.2.0
           Group: Update status
@@ -359,7 +303,10 @@ Screens:
             HoverBorderColor: =RGBA(113, 111, 110, 1)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
-            OnSelect: =
+            OnSelect: |-
+              =If(
+                  varIsSuperUser,
+                  Navigate(scrApproval, ScreenTransition.Fade),
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -429,49 +376,6 @@ Screens:
             Width: =230
             X: =832
             Y: =567
-      - Button2_2:
-          Control: Classic/Button@2.2.0
-          Group: Update status
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderStyle: =BorderStyle.None
-            Color: =RGBA(0,0,0,0)
-            DisabledBorderColor: =RGBA(0, 0, 0, 0)
-            DisabledColor: =RGBA(161, 159, 157, 1)
-            DisabledFill: =RGBA(242, 242, 241, 0)
-            Fill: =RGBA(0,0,0,0)
-            Font: =Font.'Segoe UI'
-            Height: =200
-            HoverBorderColor: =RGBA(0, 0, 0, 0)
-            HoverColor: =RGBA(0,0,0,0)
-            HoverFill: =RGBA(0,0,0,0)
-            OnSelect: |-
-              =If(
-                  varIsSuperUser,
-                  Navigate(scrApproval, ScreenTransition.Fade),
-
-                  !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Engineer")),
-                  Navigate(scrEngineerApproval, ScreenTransition.Fade),
-
-                  !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && (Role = "Manager" || Role = "Inspector"))),
-                  Navigate(scrApproval, ScreenTransition.Fade),
-
-                  !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Shipping")),
-                  Navigate(scrUpdateStatus, ScreenTransition.Fade),
-
-                  Notify("You are not authorized to access this screen.", NotificationType.Error)
-              )
-            PressedBorderColor: =RGBA(0,0,0,0)
-            PressedColor: =RGBA(0,0,0,0)
-            PressedFill: =RGBA(0,0,0,0)
-            RadiusBottomLeft: =0
-            RadiusBottomRight: =0
-            RadiusTopLeft: =0
-            RadiusTopRight: =0
-            Text: =""
-            Width: =230
-            X: =832
-            Y: =438
       - Button1_3:
           Control: Classic/Button@2.2.0
           Group: Submit request_1
@@ -489,7 +393,7 @@ Screens:
             HoverBorderColor: =RGBA(113, 111, 110, 1)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
-            OnSelect: =
+            OnSelect: =Navigate(scrReturnRequest, ScreenTransition.Fade)
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -559,34 +463,6 @@ Screens:
             Width: =230
             X: =316
             Y: =567
-      - Button2_3:
-          Control: Classic/Button@2.2.0
-          Group: Submit request_1
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderStyle: =BorderStyle.None
-            Color: =RGBA(0,0,0,0)
-            DisabledBorderColor: =RGBA(0, 0, 0, 0)
-            DisabledColor: =RGBA(161, 159, 157, 1)
-            DisabledFill: =RGBA(242, 242, 241, 0)
-            Fill: =RGBA(0,0,0,0)
-            Font: =Font.'Segoe UI'
-            Height: =200
-            HoverBorderColor: =RGBA(0, 0, 0, 0)
-            HoverColor: =RGBA(0,0,0,0)
-            HoverFill: =RGBA(0,0,0,0)
-            OnSelect: =Navigate(scrReturnRequest, ScreenTransition.Fade)
-            PressedBorderColor: =RGBA(0,0,0,0)
-            PressedColor: =RGBA(0,0,0,0)
-            PressedFill: =RGBA(0,0,0,0)
-            RadiusBottomLeft: =0
-            RadiusBottomRight: =0
-            RadiusTopLeft: =0
-            RadiusTopRight: =0
-            Text: =""
-            Width: =230
-            X: =316
-            Y: =438
       - Button1_4:
           Control: Classic/Button@2.2.0
           Group: Confirm receipt
@@ -604,7 +480,7 @@ Screens:
             HoverBorderColor: =RGBA(113, 111, 110, 1)
             HoverColor: =RGBA(255, 255, 255, 1)
             HoverFill: =RGBA(16, 110, 190, 1)
-            OnSelect: =
+            OnSelect: =Navigate(scrConfirmReceipt, ScreenTransition.Fade)
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -674,34 +550,6 @@ Screens:
             Width: =230
             X: =1090
             Y: =567
-      - Button2_4:
-          Control: Classic/Button@2.2.0
-          Group: Confirm receipt
-          Properties:
-            BorderColor: =RGBA(0, 0, 0, 0)
-            BorderStyle: =BorderStyle.None
-            Color: =RGBA(0,0,0,0)
-            DisabledBorderColor: =RGBA(0, 0, 0, 0)
-            DisabledColor: =RGBA(161, 159, 157, 1)
-            DisabledFill: =RGBA(242, 242, 241, 0)
-            Fill: =RGBA(0,0,0,0)
-            Font: =Font.'Segoe UI'
-            Height: =200
-            HoverBorderColor: =RGBA(0, 0, 0, 0)
-            HoverColor: =RGBA(0,0,0,0)
-            HoverFill: =RGBA(0,0,0,0)
-            OnSelect: =Navigate(scrConfirmReceipt, ScreenTransition.Fade)
-            PressedBorderColor: =RGBA(0,0,0,0)
-            PressedColor: =RGBA(0,0,0,0)
-            PressedFill: =RGBA(0,0,0,0)
-            RadiusBottomLeft: =0
-            RadiusBottomRight: =0
-            RadiusTopLeft: =0
-            RadiusTopRight: =0
-            Text: =""
-            Width: =230
-            X: =1090
-            Y: =438
       - lblSuperUser:
           Control: Label@2.5.1
           Properties:

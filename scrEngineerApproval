@@ -132,7 +132,7 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Bold
             Size: =16
-            Text: ="Include"
+            Text: ="Include (all ticked)"
             Width: =120
             X: =1119
             Y: =182
@@ -349,6 +349,31 @@ Screens:
                   Width: =358
                   X: =655
                   Y: =2
+      - lblEngCount:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            Height: =38
+            Size: =13
+            Text: |-
+              =If(IsBlank(drpEngNote.Selected.Value),
+                  "",
+                  With(
+                      {tot: CountRows(Filter('3PL request', Status = "Pending Engineer Approval" && ReturnDeliveryNoteNumber = drpEngNote.Selected.Value))},
+                      tot - CountRows(colEngExcluded) & " of " & tot & " line(s) selected"
+                  )
+              )
+            VerticalAlign: =VerticalAlign.Middle
+            Width: =270
+            X: =440
+            Y: =672
       - btnEngApprove:
           Control: Classic/Button@2.2.0
           Properties:
