@@ -681,10 +681,9 @@ Screens:
             X: =793
             Y: =660
       - tmrDeepLink:
-          Control: Classic/Timer@2.1.0
+          Control: Timer@2.1.0
           Properties:
             AutoStart: =true
-            BorderColor: =RGBA(0, 0, 0, 0)
             Duration: =100
             Height: =1
             OnTimerEnd: |-
@@ -701,7 +700,6 @@ Screens:
                   )
               )
             Repeat: =false
-            Reset: =false
             Visible: =false
             Width: =1
             X: =0
