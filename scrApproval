@@ -383,12 +383,12 @@ Screens:
                   ForAll(colToApprove, Patch('3PL request', {ID: ID}, {
                       Status: "Requested (to Warehouse)",
                       SendApprovedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm")
-                  })); SendDeliveryNoteEmail.Run(varSelectedNote),
+                  })); SDNE.Run(varSelectedNote),
 
                   ForAll(colToApprove, Patch('3PL request', {ID: ID}, {
                       Status: "Requested (to Facility)",
                       ReturnApprovedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm")
-                  })); SendDeliveryNoteEmail.Run(varSelectedNote)
+                  })); SDNE.Run(varSelectedNote)
               );
 
               Notify("Approved " & CountRows(colToApprove) & " line(s) on " & varSelectedNote, NotificationType.Success);

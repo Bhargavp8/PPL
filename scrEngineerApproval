@@ -414,7 +414,7 @@ Screens:
                       })
                   );
 
-                  SendDeliveryNoteEmail.Run(varEngNote);
+                  SDNE.Run(varEngNote);
 
                   Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
                   Set(varRequestorTo, Concat(Filter(Distinct(colEngApprove, ReturnRequestedBy), !IsBlank(Value)), Value, ";"));
