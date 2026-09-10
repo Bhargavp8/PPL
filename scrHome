@@ -8,21 +8,14 @@ Screens:
 
         Set(varAppLink, "REPLACE-WITH-YOUR-APP-URL");
 
-        If(!IsBlank(Param("Note")),
+        If(!varDeepDone && !IsBlank(Param("Note")),
             Set(varDeepNote, Param("Note"));
             Set(varDeepStatus,
                 LookUp('3PL request',
                     DeliveryNoteNumber = varDeepNote || ReturnDeliveryNoteNumber = varDeepNote
                 ).Status
             );
-            Switch(varDeepStatus,
-                "Pending Manager Approval", Navigate(scrApproval, ScreenTransition.Fade),
-                "Pending Inspector Approval", Navigate(scrApproval, ScreenTransition.Fade),
-                "Pending Engineer Approval", Navigate(scrEngineerApproval, ScreenTransition.Fade),
-                "Engineer Approved (Awaiting Return)", Navigate(scrConfirmReceipt, ScreenTransition.Fade),
-                "Requested (to Warehouse)", Navigate(scrUpdateStatus, ScreenTransition.Fade),
-                Navigate(scrOverview, ScreenTransition.Fade)
-            )
+            Set(varDeepGo, true)
         )
     Children:
       - Icon1:
@@ -687,3 +680,29 @@ Screens:
             Width: =180
             X: =793
             Y: =660
+      - tmrDeepLink:
+          Control: Classic/Timer@2.1.0
+          Properties:
+            AutoStart: =true
+            BorderColor: =RGBA(0, 0, 0, 0)
+            Duration: =100
+            Height: =1
+            OnTimerEnd: |-
+              =If(varDeepGo,
+                  Set(varDeepGo, false);
+                  Set(varDeepDone, true);
+                  Switch(varDeepStatus,
+                      "Pending Manager Approval", Navigate(scrApproval, ScreenTransition.Fade),
+                      "Pending Inspector Approval", Navigate(scrApproval, ScreenTransition.Fade),
+                      "Pending Engineer Approval", Navigate(scrEngineerApproval, ScreenTransition.Fade),
+                      "Engineer Approved (Awaiting Return)", Navigate(scrConfirmReceipt, ScreenTransition.Fade),
+                      "Requested (to Warehouse)", Navigate(scrUpdateStatus, ScreenTransition.Fade),
+                      Navigate(scrOverview, ScreenTransition.Fade)
+                  )
+              )
+            Repeat: =false
+            Reset: =false
+            Visible: =false
+            Width: =1
+            X: =0
+            Y: =0
