@@ -240,14 +240,33 @@ Screens:
                       Notify("Saved, but no Engineer is listed in '3PL Approvers' so no approval email was sent.", NotificationType.Warning),
                       Office365Outlook.SendEmailV2(
                           varEngineerTo,
-                          "Action required: Approve " & varDeliveryNote & " - return to facility",
+                          "[ACTION] Approve " & varDeliveryNote & " — return to facility (" & CountRows(colReturnSelections) & " lines)",
                           "<p>Hello,</p>" &
-                          "<p>Please help to approve the request: " & varDeliveryNote & " - parts requested to return to facility.</p>" &
+                          "<p>Please approve <b>" & varDeliveryNote & "</b> — parts requested to return from the warehouse to the facility.</p>" &
                           varLineItemsTable &
+                          "<p><a href='" & varAppLink & "&Note=" & varDeliveryNote & "'>Open " & varDeliveryNote & " to approve</a></p>" &
                           "<p>Regards,<br>" & User().FullName & "</p>" &
                           "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>",
-                          {Cc: varLogisticsTo}
+                          {Importance: "High"}
                       )
+                  );
+
+                  If(!IsBlank(varLogisticsTo),
+                      Office365Outlook.SendEmailV2(
+                          varLogisticsTo,
+                          "[FYI] " & varDeliveryNote & " — return requested, awaiting Engineering",
+                          "<p>A return has been requested on <b>" & varDeliveryNote & "</b> (" & CountRows(colReturnSelections) & " lines). It is awaiting Engineering approval — you will receive the delivery note once it is approved.</p>" &
+                          "<p><a href='" & varAppLink & "&Note=" & varDeliveryNote & "'>View " & varDeliveryNote & "</a></p>" &
+                          "<p style='font-size:12px;color:#888;font-style:italic;'>Status update only — no action needed from you.</p>"
+                      )
+                  );
+
+                  Office365Outlook.SendEmailV2(
+                      User().Email,
+                      "[FYI] " & varDeliveryNote & " — return submitted, awaiting Engineering",
+                      "<p>Your return request <b>" & varDeliveryNote & "</b> (" & CountRows(colReturnSelections) & " lines) has been submitted and is awaiting Engineering approval.</p>" &
+                      "<p><a href='" & varAppLink & "&Note=" & varDeliveryNote & "'>View " & varDeliveryNote & "</a></p>" &
+                      "<p style='font-size:12px;color:#888;font-style:italic;'>Status update only — no action needed from you.</p>"
                   );
 
                   Clear(colReturnSelections);

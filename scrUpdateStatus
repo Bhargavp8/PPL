@@ -323,6 +323,27 @@ Screens:
                       ForAll(colToUpdate, Patch('3PL request', {ID: ID}, {Status: varNewStatus}))
                   );
 
+                  If(varNewStatus = "In Storage",
+                      Set(varUpdTo,
+                          Concat(
+                              Filter(Distinct(colToUpdate, SendRequestedBy), !IsBlank(Value)),
+                              Value, ";"
+                          )
+                      );
+                      Set(varUpdLogistics, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
+                      Set(varUpdAll, Trim(Concatenate(varUpdTo, ";", varUpdLogistics)));
+
+                      If(!IsBlank(varUpdTo) || !IsBlank(varUpdLogistics),
+                          Office365Outlook.SendEmailV2(
+                              varUpdAll,
+                              "[FYI] " & drpDeliveryNote.Selected.Value & " — now in storage at the warehouse",
+                              "<p><b>" & drpDeliveryNote.Selected.Value & "</b> (" & CountRows(colToUpdate) & " lines) has arrived and is now in storage at the warehouse.</p>" &
+                              "<p><a href='" & varAppLink & "&Note=" & drpDeliveryNote.Selected.Value & "'>View " & drpDeliveryNote.Selected.Value & "</a></p>" &
+                              "<p style='font-size:12px;color:#888;font-style:italic;'>Status update only — no action needed from you.</p>"
+                          )
+                      )
+                  );
+
                   Notify(CountRows(colToUpdate) & " line(s) updated to " & varNewStatus, NotificationType.Success);
                   Clear(colUpdExcluded);
                   Reset(drpDeliveryNote)

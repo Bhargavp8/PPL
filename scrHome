@@ -4,7 +4,26 @@ Screens:
       Fill: =RGBA(0, 0, 0, 0.83)
       LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
       OnVisible: |-
-        =Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")))
+        =Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")));
+
+        Set(varAppLink, "REPLACE-WITH-YOUR-APP-URL");
+
+        If(!IsBlank(Param("Note")),
+            Set(varDeepNote, Param("Note"));
+            Set(varDeepStatus,
+                LookUp('3PL request',
+                    DeliveryNoteNumber = varDeepNote || ReturnDeliveryNoteNumber = varDeepNote
+                ).Status
+            );
+            Switch(varDeepStatus,
+                "Pending Manager Approval", Navigate(scrApproval, ScreenTransition.Fade),
+                "Pending Inspector Approval", Navigate(scrApproval, ScreenTransition.Fade),
+                "Pending Engineer Approval", Navigate(scrEngineerApproval, ScreenTransition.Fade),
+                "Engineer Approved (Awaiting Return)", Navigate(scrConfirmReceipt, ScreenTransition.Fade),
+                "Requested (to Warehouse)", Navigate(scrUpdateStatus, ScreenTransition.Fade),
+                Navigate(scrOverview, ScreenTransition.Fade)
+            )
+        )
     Children:
       - Icon1:
           Control: Classic/Icon@2.5.0

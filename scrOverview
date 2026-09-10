@@ -91,7 +91,7 @@ Screens:
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(245, 245, 245, 1)
-            Items: =["Active", "All", "Pending Manager Approval", "Requested (to Warehouse)", "In Storage", "Pending Engineer Approval", "Returned (Awaiting Receipt)", "Received", "Requested (to Facility)", "Pending Inspector Approval", "Closed", "Rejected"]
+            Items: =["Active", "All", "Pending Manager Approval", "Requested (to Warehouse)", "In Storage", "Pending Engineer Approval", "Engineer Approved (Awaiting Return)", "Received", "Requested (to Facility)", "Pending Inspector Approval", "Closed", "Rejected"]
             Items.Value: =Value
             PaddingBottom: =5
             PaddingLeft: =12
@@ -211,7 +211,7 @@ Screens:
                         "Requested (to Facility)", RGBA(255, 140, 0, 1),
                         "Pending Inspector Approval", RGBA(103, 58, 183, 1),
                         "Pending Engineer Approval", RGBA(0, 130, 140, 1),
-                        "Returned (Awaiting Receipt)", RGBA(230, 110, 0, 1),
+                        "Engineer Approved (Awaiting Return)", RGBA(230, 110, 0, 1),
                         "Received", RGBA(16, 124, 16, 1),
                         "Closed", RGBA(16, 124, 16, 1),
                         "Rejected", RGBA(209, 52, 56, 1),
@@ -242,7 +242,7 @@ Screens:
                         "Requested (to Facility)", ThisItem.ReturnDeliveryNoteNumber,
                         "Pending Manager Approval", If(IsBlank(ThisItem.ReturnDeliveryNoteNumber), ThisItem.DeliveryNoteNumber, ThisItem.ReturnDeliveryNoteNumber),
                         "Pending Engineer Approval", ThisItem.ReturnDeliveryNoteNumber,
-                        "Returned (Awaiting Receipt)", ThisItem.ReturnDeliveryNoteNumber,
+                        "Engineer Approved (Awaiting Return)", ThisItem.ReturnDeliveryNoteNumber,
                         "Received", ThisItem.ReturnDeliveryNoteNumber,
                         ""
                     )
@@ -268,7 +268,7 @@ Screens:
                         "Requested (to Facility)", "Return requested " & Text(ThisItem.DateRequestedFacility, "dd mmm yyyy"),
                         "Closed", "Closed " & Text(ThisItem.DateClosed, "dd mmm yyyy"),
                         "Pending Engineer Approval", "Return requested " & Text(ThisItem.DateRequestedFacility, "dd mmm yyyy"),
-                        "Returned (Awaiting Receipt)", "Approved " & Text(ThisItem.DateEngineerApproved, "dd mmm yyyy"),
+                        "Engineer Approved (Awaiting Return)", "Approved " & Text(ThisItem.DateEngineerApproved, "dd mmm yyyy"),
                         "Received", "Received " & Text(ThisItem.DateReceived, "dd mmm yyyy"),
                         ""
                     )
@@ -292,7 +292,7 @@ Screens:
                         "Requested (to Facility)", ThisItem.ReturnRemark,
                         "Closed", ThisItem.ReturnRemark,
                         "Pending Engineer Approval", ThisItem.ReturnRemark,
-                        "Returned (Awaiting Receipt)", ThisItem.ReturnRemark,
+                        "Engineer Approved (Awaiting Return)", ThisItem.ReturnRemark,
                         "Received", ThisItem.ReturnRemark,
                         ThisItem.Remark
                     )

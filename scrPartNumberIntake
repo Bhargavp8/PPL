@@ -281,13 +281,23 @@ Screens:
                   ForAll(Filter('3PL Approvers', Role = "Manager") As Mgr,
                       Office365Outlook.SendEmailV2(
                           Mgr.Email,
-                          "Action required: Approve " & varDeliveryNote & " - send to warehouse",
+                          "[ACTION] Approve " & varDeliveryNote & " — send to warehouse (" & CountRows(colToSubmit) & " lines)",
                           "<p>Hello " & Mgr.'Name ({Name})' & ",</p>" &
-                          "<p>Please help to approve the request: " & varDeliveryNote & " - parts requested to send to warehouse.</p>" &
+                          "<p>Please approve <b>" & varDeliveryNote & "</b> — parts requested to send to the warehouse for storage.</p>" &
                           varLineItemsTable &
+                          "<p><a href='" & varAppLink & "&Note=" & varDeliveryNote & "'>Open " & varDeliveryNote & " to approve</a></p>" &
                           "<p>Regards,<br>" & User().FullName & "</p>" &
-                          "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>"
+                          "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>",
+                          {Importance: "High"}
                       )
+                  );
+
+                  Office365Outlook.SendEmailV2(
+                      User().Email,
+                      "[FYI] " & varDeliveryNote & " — submitted, awaiting Manager approval",
+                      "<p>Your request <b>" & varDeliveryNote & "</b> (" & CountRows(colToSubmit) & " lines) has been submitted and is awaiting Manager approval.</p>" &
+                      "<p><a href='" & varAppLink & "&Note=" & varDeliveryNote & "'>View " & varDeliveryNote & "</a></p>" &
+                      "<p style='font-size:12px;color:#888;font-style:italic;'>Status update only — no action needed from you.</p>"
                   );
 
                   Clear(colLineItems);

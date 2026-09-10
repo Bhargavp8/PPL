@@ -408,7 +408,7 @@ Screens:
 
                   ForAll(colEngApprove,
                       Patch('3PL request', {ID: ID}, {
-                          Status: "Returned (Awaiting Receipt)",
+                          Status: "Engineer Approved (Awaiting Return)",
                           EngineerApprovedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm"),
                           DateEngineerApproved: Now()
                       })
@@ -428,18 +428,19 @@ Screens:
                       "</table>"
                   );
 
-                  If(IsBlank(varRequestorTo) && IsBlank(varLogisticsTo),
-                      Notify("Approved, but no requestor or Logistics address was found to notify.", NotificationType.Warning),
+                  If(IsBlank(varRequestorTo),
+                      Notify("Approved, but no requestor address was found to notify.", NotificationType.Warning),
                       Office365Outlook.SendEmailV2(
-                          Coalesce(varRequestorTo, varLogisticsTo),
-                          "Approved: " & varEngNote & " - return to facility",
+                          varRequestorTo,
+                          "[ACTION] " & varEngNote & " — approved, confirm receipt when parts arrive",
                           "<p>Hello,</p>" &
-                          "<p>Return request <b>" & varEngNote & "</b> has been approved by Engineering and is now awaiting receipt at the facility.</p>" &
+                          "<p>Return request <b>" & varEngNote & "</b> (" & CountRows(colEngApprove) & " lines) has been approved by Engineering. Logistics has the return delivery note and will arrange collection from the warehouse.</p>" &
                           varEngTable &
-                          "<p>The requestor should confirm receipt in the 3PL app once the parts arrive.</p>" &
+                          "<p><b>When the parts arrive, confirm receipt in the app</b> — that closes the request.</p>" &
+                          "<p><a href='" & varAppLink & "&Note=" & varEngNote & "'>Open " & varEngNote & " to confirm receipt</a></p>" &
                           "<p>Regards,<br>" & User().FullName & "</p>" &
                           "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>",
-                          {Cc: If(IsBlank(varRequestorTo), "", varLogisticsTo)}
+                          {Importance: "High"}
                       )
                   );
 
@@ -494,6 +495,32 @@ Screens:
                           RejectedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm"),
                           DateRejected: Now()
                       })
+                  );
+
+                  Set(varEngRejTo, Concat(Filter(Distinct(colEngReject, ReturnRequestedBy), !IsBlank(Value)), Value, ";"));
+                  Set(varEngRejLogistics, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
+
+                  If(!IsBlank(varEngRejTo),
+                      Office365Outlook.SendEmailV2(
+                          varEngRejTo,
+                          "[ACTION] " & varEngNote & " — return rejected, please review",
+                          "<p>Hello,</p>" &
+                          "<p>Your return request <b>" & varEngNote & "</b> (" & CountRows(colEngReject) & " lines) was <b>not approved</b> by " & User().FullName & ".</p>" &
+                          "<p>The parts remain in storage at the warehouse. Please review and resubmit if the return is still needed.</p>" &
+                          "<p><a href='" & varAppLink & "&Note=" & varEngNote & "'>View " & varEngNote & "</a></p>" &
+                          "<p style='font-size:12px;color:#888;font-style:italic;'>This is an automated email.</p>",
+                          {Importance: "High"}
+                      )
+                  );
+
+                  If(!IsBlank(varEngRejLogistics),
+                      Office365Outlook.SendEmailV2(
+                          varEngRejLogistics,
+                          "[FYI] " & varEngNote & " — return rejected, no collection needed",
+                          "<p>Return request <b>" & varEngNote & "</b> (" & CountRows(colEngReject) & " lines) was rejected by Engineering. No collection is required — the parts stay in storage.</p>" &
+                          "<p><a href='" & varAppLink & "&Note=" & varEngNote & "'>View " & varEngNote & "</a></p>" &
+                          "<p style='font-size:12px;color:#888;font-style:italic;'>Status update only — no action needed from you.</p>"
+                      )
                   );
 
                   Notify("Rejected " & CountRows(colEngReject) & " line(s) on " & varEngNote, NotificationType.Success);
