@@ -25,6 +25,50 @@ Screens:
             Width: =345
             X: =56
             Y: =40
+      - lblCellPick:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="Cell"
+            Width: =40
+            X: =430
+            Y: =52
+      - drpCell:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            BorderColor: =RGBA(245, 245, 245, 1)
+            ChevronBackground: =RGBA(245, 245, 245, 1)
+            ChevronDisabledBackground: =RGBA(242, 242, 241, 0)
+            ChevronDisabledFill: =RGBA(161, 159, 157, 1)
+            ChevronFill: =RGBA(50, 49, 48, 1)
+            ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+            ChevronHoverFill: =RGBA(50, 49, 48, 1)
+            Color: =RGBA(50, 49, 48, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            DisabledFill: =RGBA(242, 242, 241, 0)
+            Fill: =RGBA(245, 245, 245, 1)
+            Font: =Font.'Segoe UI'
+            Height: =40
+            HoverBorderColor: =RGBA(16, 110, 190, 1)
+            HoverColor: =RGBA(50, 49, 48, 1)
+            HoverFill: =RGBA(245, 245, 245, 1)
+            Items: =["Chamber", "SE1"]
+            PaddingBottom: =5
+            PaddingLeft: =12
+            PaddingRight: =5
+            PaddingTop: =5
+            Size: =12
+            Width: =180
+            X: =478
+            Y: =47
       - galLineItems:
           Control: Gallery@2.15.0
           Variant: Vertical
@@ -249,7 +293,10 @@ Screens:
               =Set(varBatchID, GUID());
               ClearCollect(colToSubmit, Filter(colLineItems, !IsBlank(SalesOrder) && !IsBlank(PartNumber)));
 
-              If(CountRows(colToSubmit) = 0,
+              If(IsBlank(drpCell.Selected.Value),
+                  Notify("Choose a cell before submitting.", NotificationType.Error),
+
+                  CountRows(colToSubmit) = 0,
                   Notify("Enter at least one line with a sales order and part number before submitting.", NotificationType.Error),
 
                   Set(varNextID, Coalesce(First(Sort('3PL request', ID, SortOrder.Descending)).ID, 0) + 1);
@@ -258,6 +305,7 @@ Screens:
                   ForAll(colToSubmit,
                       Patch('3PL request', Defaults('3PL request'), {
                           BatchID: Text(varBatchID),
+                          Cell: drpCell.Selected.Value,
                           DeliveryNoteNumber: varDeliveryNote,
                           'Sales Order': Text(SalesOrder),
                           'Part Number': Text(PartNumber),
@@ -278,7 +326,7 @@ Screens:
                       "</table>"
                   );
 
-                  ForAll(Filter('3PL Approvers', Role = "Manager") As Mgr,
+                  ForAll(Filter('3PL Approvers', Role = "Manager" && (Cell = drpCell.Selected.Value || IsBlank(Cell))) As Mgr,
                       Office365Outlook.SendEmailV2(
                           Mgr.Email,
                           "[ACTION] Approve " & varDeliveryNote & " — send to warehouse (" & CountRows(colToSubmit) & " lines)",

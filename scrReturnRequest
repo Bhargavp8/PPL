@@ -233,7 +233,8 @@ Screens:
                       "</table>"
                   );
 
-                  Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer" && !IsBlank(Email)), Email, ";"));
+                  Set(varReturnCell, LookUp('3PL request', ID = First(colReturnSelections).ID).Cell);
+                  Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer" && !IsBlank(Email) && (Cell = varReturnCell || IsBlank(Cell))), Email, ";"));
                   Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
 
                   If(IsBlank(varEngineerTo),

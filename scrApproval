@@ -8,6 +8,10 @@ Screens:
         Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")));
         Set(varCanApproveManager, varIsSuperUser || CountRows(Filter(colMyRoles, Role = "Manager")) > 0);
         Set(varCanApproveInspector, varIsSuperUser || CountRows(Filter(colMyRoles, Role = "Inspector")) > 0);
+
+        Set(varMyCell, First(Filter(colMyRoles, !IsBlank(Cell))).Cell);
+        Set(varSeeAllCells, varIsSuperUser || CountRows(Filter(colMyRoles, !IsBlank(Cell))) <> 1);
+
         Clear(colApprExcluded)
     Children:
       - drpDeliveryNote1:
@@ -32,9 +36,16 @@ Screens:
             Items: |-
               =Distinct(
                   Search(
-                      Filter('3PL request',
-                          (Status = "Pending Manager Approval" && varCanApproveManager) ||
-                          (Status = "Pending Inspector Approval" && varCanApproveInspector)
+                      If(varSeeAllCells,
+                          Filter('3PL request',
+                              (Status = "Pending Manager Approval" && varCanApproveManager) ||
+                              (Status = "Pending Inspector Approval" && varCanApproveInspector)
+                          ),
+                          Filter('3PL request',
+                              ((Status = "Pending Manager Approval" && varCanApproveManager) ||
+                               (Status = "Pending Inspector Approval" && varCanApproveInspector)) &&
+                              Cell = varMyCell
+                          )
                       ),
                       txtApprSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark, DeliveryNoteNumber, ReturnDeliveryNoteNumber
                   ),
