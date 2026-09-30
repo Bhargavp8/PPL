@@ -91,7 +91,7 @@ Screens:
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(245, 245, 245, 1)
-            Items: =["Active", "All", "Pending Manager Approval", "Requested (to Warehouse)", "In Storage", "Pending Engineer Approval", "Engineer Approved (Awaiting Return)", "Received", "Requested (to Facility)", "Pending Inspector Approval", "Closed", "Rejected"]
+            Items: =["Active", "All", "Pending Manager Approval", "Requested (to Warehouse)", "In Storage", "Pending Engineer Approval", "Approved (Awaiting Return)", "Received", "Closed", "Rejected"]
             Items.Value: =Value
             PaddingBottom: =5
             PaddingLeft: =12
@@ -208,10 +208,8 @@ Screens:
                         "Pending Manager Approval", RGBA(136, 23, 152, 1),
                         "Requested (to Warehouse)", RGBA(255, 196, 0, 1),
                         "In Storage", RGBA(0, 120, 212, 1),
-                        "Requested (to Facility)", RGBA(255, 140, 0, 1),
-                        "Pending Inspector Approval", RGBA(103, 58, 183, 1),
                         "Pending Engineer Approval", RGBA(0, 130, 140, 1),
-                        "Engineer Approved (Awaiting Return)", RGBA(230, 110, 0, 1),
+                        "Approved (Awaiting Return)", RGBA(230, 110, 0, 1),
                         "Received", RGBA(16, 124, 16, 1),
                         "Closed", RGBA(16, 124, 16, 1),
                         "Rejected", RGBA(209, 52, 56, 1),
@@ -239,10 +237,9 @@ Screens:
                   Text: |-
                     =Switch(ThisItem.Status,
                         "Requested (to Warehouse)", ThisItem.DeliveryNoteNumber,
-                        "Requested (to Facility)", ThisItem.ReturnDeliveryNoteNumber,
                         "Pending Manager Approval", If(IsBlank(ThisItem.ReturnDeliveryNoteNumber), ThisItem.DeliveryNoteNumber, ThisItem.ReturnDeliveryNoteNumber),
                         "Pending Engineer Approval", ThisItem.ReturnDeliveryNoteNumber,
-                        "Engineer Approved (Awaiting Return)", ThisItem.ReturnDeliveryNoteNumber,
+                        "Approved (Awaiting Return)", ThisItem.ReturnDeliveryNoteNumber,
                         "Received", ThisItem.ReturnDeliveryNoteNumber,
                         ""
                     )
@@ -265,10 +262,9 @@ Screens:
                     =Switch(ThisItem.Status,
                         "Requested (to Warehouse)", "Requested " & Text(ThisItem.DateRequestedWarehouse, "dd mmm yyyy"),
                         "In Storage", "In storage since " & Text(ThisItem.DateInStorage, "dd mmm yyyy"),
-                        "Requested (to Facility)", "Return requested " & Text(ThisItem.DateRequestedFacility, "dd mmm yyyy"),
                         "Closed", "Closed " & Text(ThisItem.DateClosed, "dd mmm yyyy"),
                         "Pending Engineer Approval", "Return requested " & Text(ThisItem.DateRequestedFacility, "dd mmm yyyy"),
-                        "Engineer Approved (Awaiting Return)", "Approved " & Text(ThisItem.DateEngineerApproved, "dd mmm yyyy"),
+                        "Approved (Awaiting Return)", "Approved " & Text(ThisItem.DateEngineerApproved, "dd mmm yyyy"),
                         "Received", "Received " & Text(ThisItem.DateReceived, "dd mmm yyyy"),
                         ""
                     )
@@ -289,10 +285,9 @@ Screens:
                   OnSelect: =Select(Parent)
                   Text: |-
                     =Switch(ThisItem.Status,
-                        "Requested (to Facility)", ThisItem.ReturnRemark,
                         "Closed", ThisItem.ReturnRemark,
                         "Pending Engineer Approval", ThisItem.ReturnRemark,
-                        "Engineer Approved (Awaiting Return)", ThisItem.ReturnRemark,
+                        "Approved (Awaiting Return)", ThisItem.ReturnRemark,
                         "Received", ThisItem.ReturnRemark,
                         ThisItem.Remark
                     )

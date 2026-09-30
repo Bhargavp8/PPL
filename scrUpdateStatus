@@ -70,10 +70,10 @@ Screens:
             Items: |-
               =Distinct(
                   Search(
-                      Filter('3PL request', Status = "Requested (to Warehouse)" || Status = "Requested (to Facility)"),
+                      Filter('3PL request', Status = "Requested (to Warehouse)"),
                       txtUpdSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark, DeliveryNoteNumber, ReturnDeliveryNoteNumber
                   ),
-                  If(Status = "Requested (to Warehouse)", DeliveryNoteNumber, ReturnDeliveryNoteNumber)
+                  DeliveryNoteNumber
               )
             Items.Value: =Value
             OnChange: =Clear(colUpdExcluded)
@@ -139,8 +139,7 @@ Screens:
             Items: |-
               =Search(
                   Filter('3PL request',
-                      (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") ||
-                      (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")
+                      DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)"
                   ),
                   txtUpdSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark, DeliveryNoteNumber, ReturnDeliveryNoteNumber
               )
@@ -255,11 +254,7 @@ Screens:
                   Font: =Font.'Segoe UI'
                   OnSelect: =Select(Parent)
                   Text: |-
-                    =Switch(ThisItem.Status,
-                        "Requested (to Warehouse)", ThisItem.Remark,
-                        "Requested (to Facility)", ThisItem.ReturnRemark,
-                        ""
-                    )
+                    =ThisItem.Remark
                   Width: =300
                   X: =660
       - lblUpdCount:
@@ -279,7 +274,7 @@ Screens:
               =If(IsBlank(drpDeliveryNote.Selected.Value),
                   "",
                   With(
-                      {tot: CountRows(Filter('3PL request', (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") || (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")))},
+                      {tot: CountRows(Filter('3PL request', DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)"))},
                       tot - CountRows(colUpdExcluded) & " of " & tot & " line(s) selected"
                   )
               )
@@ -306,8 +301,7 @@ Screens:
               =ClearCollect(colToUpdate,
                   Filter(
                       Filter('3PL request',
-                          (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") ||
-                          (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")
+                          DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)"
                       ) As Row,
                       IsBlank(LookUp(colUpdExcluded, ID = Row.ID))
                   )
@@ -316,7 +310,7 @@ Screens:
               If(CountRows(colToUpdate) = 0,
                   Notify("Tick at least one line to confirm.", NotificationType.Error),
 
-                  Set(varNewStatus, If(First(colToUpdate).Status = "Requested (to Warehouse)", "In Storage", "Pending Inspector Approval"));
+                  Set(varNewStatus, "In Storage");
 
                   If(varNewStatus = "In Storage",
                       ForAll(colToUpdate, Patch('3PL request', {ID: ID}, {Status: varNewStatus, DateInStorage: Now()})),
@@ -355,12 +349,7 @@ Screens:
             RadiusBottomRight: =0
             RadiusTopLeft: =0
             RadiusTopRight: =0
-            Text: |-
-              =If(
-                  LookUp('3PL request', (DeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Warehouse)") || (ReturnDeliveryNoteNumber = drpDeliveryNote.Selected.Value && Status = "Requested (to Facility)")).Status = "Requested (to Warehouse)",
-                  "Confirm Sent to Warehouse",
-                  "Confirm Returned to Facility"
-              )
+            Text: ="Confirm Sent to Warehouse"
             Width: =281
             X: =114
             Y: =655

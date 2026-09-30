@@ -60,7 +60,7 @@ Screens:
             HoverBorderColor: =RGBA(16, 110, 190, 1)
             HoverColor: =RGBA(50, 49, 48, 1)
             HoverFill: =RGBA(245, 245, 245, 1)
-            Items: =["Chamber", "SE1"]
+            Items: =["Chamber", "SE1", "Material Store"]
             PaddingBottom: =5
             PaddingLeft: =12
             PaddingRight: =5

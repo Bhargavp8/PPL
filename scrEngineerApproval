@@ -418,7 +418,7 @@ Screens:
 
                   ForAll(colEngApprove,
                       Patch('3PL request', {ID: ID}, {
-                          Status: "Engineer Approved (Awaiting Return)",
+                          Status: "Approved (Awaiting Return)",
                           EngineerApprovedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm"),
                           DateEngineerApproved: Now()
                       })

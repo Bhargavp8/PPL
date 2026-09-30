@@ -8,6 +8,14 @@ Screens:
 
         Set(varAppLink, "REPLACE-WITH-YOUR-APP-URL");
 
+        Set(varCanApprove,
+            varIsSuperUser ||
+            !IsBlank(LookUp('3PL Approvers',
+                Lower(Trim(Email)) = Lower(Trim(User().Email)) &&
+                (Role = "Manager" || Role = "Engineer" || Role = "Shipping")
+            ))
+        );
+
         If(!varDeepDone && !IsBlank(Param("Note")),
             Set(varDeepNote, Param("Note"));
             Set(varDeepStatus,
@@ -323,7 +331,7 @@ Screens:
                   !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Engineer")),
                   Navigate(scrEngineerApproval, ScreenTransition.Fade),
 
-                  !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && (Role = "Manager" || Role = "Inspector"))),
+                  !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Manager")),
                   Navigate(scrApproval, ScreenTransition.Fade),
 
                   !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Shipping")),
@@ -331,6 +339,7 @@ Screens:
 
                   Notify("You are not authorized to access this screen.", NotificationType.Error)
               )
+            Visible: =varCanApprove
             PressedBorderColor: =RGBA(0, 69, 120, 1)
             PressedColor: =RGBA(255, 255, 255, 1)
             PressedFill: =RGBA(16, 110, 190, 1)
@@ -361,6 +370,7 @@ Screens:
             PressedColor: =RGBA(16, 110, 190, 1)
             PressedFill: =RGBA(0, 0, 0, 0)
             Width: =50
+            Visible: =varCanApprove
             X: =922
             Y: =493
       - Label3_4:
@@ -378,6 +388,7 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Text: ="Update/Approve"
+            Visible: =varCanApprove
             Width: =230
             X: =832
             Y: =542
@@ -396,7 +407,8 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Size: =11
-            Text: ="Engineer/Manager/Shipping"
+            Text: ="Approvals & shipping"
+            Visible: =varCanApprove
             Width: =230
             X: =832
             Y: =567
@@ -483,7 +495,7 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Semibold
             Size: =11
-            Text: ="Back to PWCS"
+            Text: ="From warehouse"
             Width: =230
             X: =316
             Y: =567
@@ -617,7 +629,7 @@ Screens:
             RadiusTopLeft: =6
             RadiusTopRight: =6
             Size: =11
-            Text: ="Manager / Inspector"
+            Text: ="Manager approvals"
             Visible: =varIsSuperUser
             Width: =180
             X: =393
@@ -692,9 +704,8 @@ Screens:
                   Set(varDeepDone, true);
                   Switch(varDeepStatus,
                       "Pending Manager Approval", Navigate(scrApproval, ScreenTransition.Fade),
-                      "Pending Inspector Approval", Navigate(scrApproval, ScreenTransition.Fade),
                       "Pending Engineer Approval", Navigate(scrEngineerApproval, ScreenTransition.Fade),
-                      "Engineer Approved (Awaiting Return)", Navigate(scrConfirmReceipt, ScreenTransition.Fade),
+                      "Approved (Awaiting Return)", Navigate(scrConfirmReceipt, ScreenTransition.Fade),
                       "Requested (to Warehouse)", Navigate(scrUpdateStatus, ScreenTransition.Fade),
                       Navigate(scrOverview, ScreenTransition.Fade)
                   )

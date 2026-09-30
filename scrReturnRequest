@@ -211,10 +211,11 @@ Screens:
                       )
                   );
                   Set(varDeliveryNote, "R-" & Text(Coalesce(varMaxReturnNum, 0) + 1, "0000"));
+                  Set(varReturnCell, LookUp('3PL request', ID = First(colReturnSelections).ID).Cell);
 
                   ForAll(colReturnSelections As Sel,
                       Patch('3PL request', {ID: Sel.ID}, {
-                          Status: "Pending Engineer Approval",
+                          Status: If(varReturnCell = "Material Store", "Pending Manager Approval", "Pending Engineer Approval"),
                           ReturnDeliveryNoteNumber: varDeliveryNote,
                           ReturnRemark: Sel.Remark,
                           ReturnRequestedBy: User().Email,
@@ -233,8 +234,15 @@ Screens:
                       "</table>"
                   );
 
-                  Set(varReturnCell, LookUp('3PL request', ID = First(colReturnSelections).ID).Cell);
-                  Set(varEngineerTo, Concat(Filter('3PL Approvers', Role = "Engineer" && !IsBlank(Email) && (Cell = varReturnCell || IsBlank(Cell))), Email, ";"));
+                  Set(varEngineerTo,
+                      Concat(
+                          Filter('3PL Approvers',
+                              Role = If(varReturnCell = "Material Store", "Manager", "Engineer") &&
+                              !IsBlank(Email) && (Cell = varReturnCell || IsBlank(Cell))
+                          ),
+                          Email, ";"
+                      )
+                  );
                   Set(varLogisticsTo, Concat(Filter('3PL Approvers', Role = "Logistics" && !IsBlank(Email)), Email, ";"));
 
                   If(IsBlank(varEngineerTo),

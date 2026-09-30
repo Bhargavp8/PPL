@@ -188,9 +188,9 @@ Screens:
             Items: |-
               =Search(
                   If(varIsSuperUser,
-                      Filter('3PL request', Status = "Engineer Approved (Awaiting Return)"),
+                      Filter('3PL request', Status = "Approved (Awaiting Return)"),
                       Filter('3PL request',
-                          Status = "Engineer Approved (Awaiting Return)" &&
+                          Status = "Approved (Awaiting Return)" &&
                           ReturnRequestedBy = varMyEmail
                       )
                   ),

@@ -7,7 +7,6 @@ Screens:
         =ClearCollect(colMyRoles, Filter('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email))));
         Set(varIsSuperUser, !IsBlank(LookUp('3PL Approvers', Lower(Trim(Email)) = Lower(Trim(User().Email)) && Role = "Super User")));
         Set(varCanApproveManager, varIsSuperUser || CountRows(Filter(colMyRoles, Role = "Manager")) > 0);
-        Set(varCanApproveInspector, varIsSuperUser || CountRows(Filter(colMyRoles, Role = "Inspector")) > 0);
 
         Set(varMyCell, First(Filter(colMyRoles, !IsBlank(Cell))).Cell);
         Set(varSeeAllCells, varIsSuperUser || CountRows(Filter(colMyRoles, !IsBlank(Cell))) <> 1);
@@ -38,18 +37,16 @@ Screens:
                   Search(
                       If(varSeeAllCells,
                           Filter('3PL request',
-                              (Status = "Pending Manager Approval" && varCanApproveManager) ||
-                              (Status = "Pending Inspector Approval" && varCanApproveInspector)
+                              Status = "Pending Manager Approval" && varCanApproveManager
                           ),
                           Filter('3PL request',
-                              ((Status = "Pending Manager Approval" && varCanApproveManager) ||
-                               (Status = "Pending Inspector Approval" && varCanApproveInspector)) &&
+                              Status = "Pending Manager Approval" && varCanApproveManager &&
                               Cell = varMyCell
                           )
                       ),
                       txtApprSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark, DeliveryNoteNumber, ReturnDeliveryNoteNumber
                   ),
-                  If(Status = "Pending Inspector Approval" || !IsBlank(ReturnDeliveryNoteNumber), ReturnDeliveryNoteNumber, DeliveryNoteNumber)
+                  If(!IsBlank(ReturnDeliveryNoteNumber), ReturnDeliveryNoteNumber, DeliveryNoteNumber)
               )
             Items.Value: =Value
             OnChange: =Clear(colApprExcluded)
@@ -99,7 +96,7 @@ Screens:
               =Search(
                   Filter('3PL request',
                       !IsBlank(drpDeliveryNote1.Selected.Value) &&
-                      (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") &&
+                      Status = "Pending Manager Approval" &&
                       (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)
                   ),
                   txtApprSearch.Text, 'Sales Order', 'Part Number', Description, TrolleyNumber, Remark, ReturnRemark, DeliveryNoteNumber, ReturnDeliveryNoteNumber
@@ -246,9 +243,9 @@ Screens:
             Font: =Font.'Segoe UI'
             Size: =12
             Text: |-
-              =If(!IsBlank(First(galApprovalItems.AllItems)) && First(galApprovalItems.AllItems).Status = "Pending Inspector Approval",
-                  "Inspector Approval — Closing",
-                  If(IsBlank(First(galApprovalItems.AllItems).ReturnDeliveryNoteNumber), "Requested to warehouse Approval", "Requested Return from warehouse Approval")
+              =If(IsBlank(First(galApprovalItems.AllItems).ReturnDeliveryNoteNumber),
+                  "Approve send to warehouse",
+                  "Approve return to facility"
               )
             Width: =470
             X: =730
@@ -344,7 +341,7 @@ Screens:
               =If(IsBlank(drpDeliveryNote1.Selected.Value),
                   "",
                   With(
-                      {tot: CountRows(Filter('3PL request', (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)))},
+                      {tot: CountRows(Filter('3PL request', Status = "Pending Manager Approval" && (DeliveryNoteNumber = drpDeliveryNote1.Selected.Value || ReturnDeliveryNoteNumber = drpDeliveryNote1.Selected.Value)))},
                       tot - CountRows(colApprExcluded) & " of " & tot & " line(s) selected"
                   )
               )
@@ -372,7 +369,7 @@ Screens:
               ClearCollect(colToApprove,
                   Filter(
                       Filter('3PL request',
-                          (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") &&
+                          Status = "Pending Manager Approval" &&
                           (DeliveryNoteNumber = varSelectedNote || ReturnDeliveryNoteNumber = varSelectedNote)
                       ) As Row,
                       IsBlank(LookUp(colApprExcluded, ID = Row.ID))
@@ -383,13 +380,6 @@ Screens:
                   Notify("Tick at least one line to approve.", NotificationType.Error),
 
               If(
-                  First(colToApprove).Status = "Pending Inspector Approval",
-                  ForAll(colToApprove, Patch('3PL request', {ID: ID}, {
-                      Status: "Closed",
-                      InspectorApprovedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm"),
-                      DateClosed: Now()
-                  })),
-
                   IsBlank(First(colToApprove).ReturnDeliveryNoteNumber),
                   ForAll(colToApprove, Patch('3PL request', {ID: ID}, {
                       Status: "Requested (to Warehouse)",
@@ -397,14 +387,14 @@ Screens:
                   })); SDNE.Run(varSelectedNote),
 
                   ForAll(colToApprove, Patch('3PL request', {ID: ID}, {
-                      Status: "Requested (to Facility)",
+                      Status: "Approved (Awaiting Return)",
                       ReturnApprovedBy: "Digitally signed: " & User().FullName & " - " & Text(Now(), "dd/mm/yyyy hh:mm")
                   })); SDNE.Run(varSelectedNote)
               );
 
               Set(varApprRequestorTo,
                   Concat(
-                      Filter(Distinct(colToApprove, Coalesce(SendRequestedBy, ReturnRequestedBy)), !IsBlank(Value)),
+                      Filter(Distinct(colToApprove, If(IsBlank(ReturnDeliveryNoteNumber), SendRequestedBy, ReturnRequestedBy)), !IsBlank(Value)),
                       Value, ";"
                   )
               );
@@ -452,7 +442,7 @@ Screens:
               ClearCollect(colToReject,
                   Filter(
                       Filter('3PL request',
-                          (Status = "Pending Manager Approval" || Status = "Pending Inspector Approval") &&
+                          Status = "Pending Manager Approval" &&
                           (DeliveryNoteNumber = varSelectedNote || ReturnDeliveryNoteNumber = varSelectedNote)
                       ) As Row,
                       IsBlank(LookUp(colApprExcluded, ID = Row.ID))
@@ -470,7 +460,7 @@ Screens:
 
                   Set(varRejRequestorTo,
                       Concat(
-                          Filter(Distinct(colToReject, Coalesce(SendRequestedBy, ReturnRequestedBy)), !IsBlank(Value)),
+                          Filter(Distinct(colToReject, If(IsBlank(ReturnDeliveryNoteNumber), SendRequestedBy, ReturnRequestedBy)), !IsBlank(Value)),
                           Value, ";"
                       )
                   );
